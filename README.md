@@ -44,3 +44,5 @@ npm run dev
 ```
 
 5. ブラウザで `http://localhost:5173/` にアクセスします。
+
+6. ※VOICEVOXによる音声を試す場合は、VOICEVOXを起動してください。
