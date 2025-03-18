@@ -1,0 +1,30 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "CubismSdkForWeb/Core/*.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ],
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@core/*": [
+        "./CubismSdkForWeb/Core/*"
+      ],
+      "@framework/*": [
+        "./CubismSdkForWeb/Framework/src/*"
+      ],
+      "@demo/*": [
+        "./CubismSdkForWeb/Samples/TypeScript/Demo/src/*"
+      ]
+    }
+  }
+}
