@@ -18,6 +18,10 @@ import { RouterLink, RouterView } from 'vue-router';
         <RouterLink to="/novel-game"
           class="px-4 py-2 text-gray-300 hover:text-white font-medium mx-2 rounded hover:bg-gray-700 transition-colors">
           Novel Game</RouterLink>
+
+        <RouterLink to="/llm-chat"
+          class="px-4 py-2 text-gray-300 hover:text-white font-medium mx-2 rounded hover:bg-gray-700 transition-colors">
+          LLM Chat</RouterLink>
       </nav>
     </div>
   </header>
