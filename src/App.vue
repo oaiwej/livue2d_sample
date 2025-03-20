@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router';
 
 <template>
   <header class="bg-gray-800 py-4">
-    <h1 class="text-white text-center text-2xl font-bold">Livue2D sample app</h1>
+    <h1 class="dark: text-white text-center text-2xl font-bold">Livue2D sample app</h1>
     <div class="max-w-6xl mx-auto px-4">
       <nav class="flex justify-center">
         <RouterLink to="/gallary"
