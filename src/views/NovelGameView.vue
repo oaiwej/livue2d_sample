@@ -239,8 +239,8 @@ onBeforeUnmount(() => {
           </VCubismCanvasWebGLProvider>
         </VCubismFramework>
         <div class="absolute bottom-0 left-0 right-0 px-4 py-2 bg-blue-950/90 bg-opacity-50 h-32">
-          <p class="text-white dark:text-gray-200 pb-2">{{ currentText.character }}</p>
-          <p class="text-sm text-gray-600 dark:text-gray-200">{{ currentChars }}</p>
+          <p class="text-gray-200 pb-2">{{ currentText.character }}</p>
+          <p class="text-sm text-gray-200">{{ currentChars }}</p>
         </div>
       </div>
     </div>

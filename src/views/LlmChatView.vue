@@ -223,7 +223,7 @@ onUpdated(() => {
       </div>
 
       <!-- チャットボックス -->
-      <div class="bg-slate-900 rounded-xl flex flex-col flex-1">
+      <div class="bg-slate-300 dark:bg-slate-900 rounded-xl flex flex-col flex-1">
         <div class="flex-1 flex flex-col overflow-y-auto" ref="chatBox">
           <div class="flex flex-col gap-2 p-4">
             <div v-for="(message, index) in chatMessages" :key="index" :class="['mb-2 p-2 rounded break-all whitespace-pre-wrap', message.isUser
@@ -235,7 +235,7 @@ onUpdated(() => {
         </div>
         <form @submit.prevent="onSubmit" class="flex p-2 border-t border-gray-700">
           <input type="text" v-model="text" placeholder="メッセージを入力..."
-            class="border border-gray-300 rounded-l px-4 py-2 flex-1" />
+            class="bg-slate-200 dark:bg-slate-800 border border-gray-300 rounded-l px-4 py-2 flex-1" />
           <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">送信</button>
         </form>
       </div>
