@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<{
   apiUrl?: string;
 }>(), {
   speedScale: 1.0,
-  apiUrl: 'http://localhost:50021',
+  apiUrl: import.meta.env.VITE_VOICEVOX_API_BASE_URL.replace(/\/$/, ''),
 });
 
 // イベント定義

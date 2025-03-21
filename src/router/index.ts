@@ -1,4 +1,5 @@
 import GallaryView from '@/views/GallaryView.vue'
+import LlmChatView from '@/views/LlmChatView.vue'
 import MultiCharacterView from '@/views/MultiCharacterView.vue'
 import NovelGameView from '@/views/NovelGameView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/novel-game',
       name: 'NovelGame',
       component: NovelGameView,
+    },
+    {
+      path: '/llm-chat',
+      name: 'LLMChat',
+      component: LlmChatView,
     },
   ],
 })

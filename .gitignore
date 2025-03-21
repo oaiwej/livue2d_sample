@@ -39,3 +39,5 @@ playwright-report/
 /public/Resources
 
 index.md
+
+.env
