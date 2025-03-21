@@ -128,6 +128,7 @@ export class CharacterChatWithExpression {
             content: `Changed the expression to ${args.expressionType}.`,
             tool_call_id: functionCall.id,
           }
+          this.conversationHistory.push(toolMessage)
 
           // ツールレスポンスを含めて再度APIリクエスト
           const response = await openai.chat.completions.create({

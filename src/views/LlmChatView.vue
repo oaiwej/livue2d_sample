@@ -35,7 +35,7 @@ const chatMessages = ref<ChatMessage[]>([
 const characterChat = shallowRef<CharacterChatWithExpression>(new CharacterChatWithExpression([
   {
     role: 'system',
-    content: `あなたは魔女「マオ」として明るくフランクに返答してください。必ず日本語で返答してください。`,
+    content: `あなたは魔女見習いの「マオ」として明るくフランクに返答してください。必ず日本語で返答してください。`,
   }
 ]));
 
@@ -169,7 +169,7 @@ onUpdated(() => {
     <header class="pb-4 block">
       <h2 class="text-gray-600 dark:text-gray-200 text-xl py-4">LLMとのチャットとモデルの制御</h2>
       <p class="text-gray-500 dark:text-gray-400">
-        ユーザーの入力に応じて、LLMが返答し、Function CallingによってLive2Dモデルの表情とモーションを制御します。
+        ユーザーの入力に応じてLLMが返答し、Function CallingによってLive2Dモデルの表情とモーションを制御します。
       </p>
     </header>
     <div class="flex-1 flex flex-row gap-4 overflow-hidden">
