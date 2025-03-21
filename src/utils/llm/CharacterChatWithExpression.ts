@@ -49,11 +49,28 @@ export class CharacterChatWithExpression {
       You can also change the character's expression using the \`change_character_expression\` function in response to the conversation.
     `,
   }
+  // 会話履歴の数がこの数以上になったら要約する
+  protected summarizeLength = 5
+  // 会話履歴を要約するためのシステムメッセージ
+  protected summarizeSystemMessage: ChatCompletionSystemMessageParam = {
+    role: 'system',
+    // これまでの会話を要約してください。具体的な名詞や日付などは失われないように注意してください。
+    content:
+      'Please summarize the conversation so far. Be careful not to lose specific nouns, dates, etc.',
+  }
+  // 会話履歴の要約を促すユーザーメッセージ
+  protected summarizeUserMessage: ChatCompletionUserMessageParam = {
+    role: 'user',
+    content: 'Please summarize the conversation so far.',
+  }
+
+  // オプションのシステムメッセージ
   protected systemMessages: ChatCompletionSystemMessageParam[] = []
 
   /**
    * キャラクターの会話と表情を管理するクラスを初期化する
    * @param systemMessages 追加のシステムメッセージ
+   * @param summarizeLength 会話履歴の数がこの数以上になったら要約する
    */
   constructor(
     systemMessages: ChatCompletionSystemMessageParam[] = [],
@@ -168,17 +185,6 @@ export class CharacterChatWithExpression {
   /**
    * 会話履歴を要約する処理
    */
-  protected summarizeLength = 5
-  protected summarizeSystemMessage: ChatCompletionSystemMessageParam = {
-    role: 'system',
-    // これまでの会話を要約してください。具体的な名詞や日付などは失われないように注意してください。
-    content:
-      'Please summarize the conversation so far. Be careful not to lose specific nouns, dates, etc.',
-  }
-  protected summarizeUserMessage: ChatCompletionUserMessageParam = {
-    role: 'user',
-    content: 'Please summarize the conversation so far.',
-  }
   public async summarizeHistory(): Promise<void> {
     const response = await openai.chat.completions.create({
       model,

@@ -3,7 +3,7 @@ import VVoicevoxLipsync from '@/components/VVoicevoxLipsync.vue';
 import VCubismCanvasWebGLProvider from '@/live2d/components/VCubismCanvasWebGLProvider.vue';
 import VCubismExpressionManager from '@/live2d/components/VCubismExpressionManager.vue';
 import VCubismFramework from '@/live2d/components/VCubismFramework.vue';
-import VCubismModelAssetsProvider, { type CubismModelAssets } from '@/live2d/components/VCubismModelAssetsProvider.vue';
+import VCubismModelAssetsProvider from '@/live2d/components/VCubismModelAssetsProvider.vue';
 import VCubismModelAssetsRenderer from '@/live2d/components/VCubismModelAssetsRenderer.vue';
 import VCubismModelMatrixProvider from '@/live2d/components/VCubismModelMatrixProvider.vue';
 import VCubismMotionManager from '@/live2d/components/VCubismMotionManager.vue';
@@ -26,7 +26,11 @@ interface ChatMessage {
   isUser: boolean;
 }
 
-const text = ref(''); // ユーザーの入力
+// canvasのサイズ
+const canvasWidth = ref(1024);
+const canvasHeight = ref(1024);
+// ユーザーの入力
+const inputText = ref('');
 // チャットメッセージのリスト
 const chatMessages = ref<ChatMessage[]>([
   { text: 'こんにちは！チャットでお話ししましょう！', isUser: false }
@@ -43,14 +47,14 @@ const characterChat = shallowRef<CharacterChatWithExpression>(new CharacterChatW
  * ユーザーの入力を送信
  */
 async function onSubmit() {
-  if (!text.value.trim()) return;
+  if (!inputText.value.trim()) return;
 
   // ユーザーのメッセージを追加
-  const userMessage = text.value;
+  const userMessage = inputText.value;
   chatMessages.value.push({ text: userMessage, isUser: true });
 
   // 入力欄をクリア
-  text.value = '';
+  inputText.value = '';
 
   try {
     // APIからの応答を取得
@@ -108,10 +112,6 @@ async function onSubmit() {
   }
 }
 
-// canvasのサイズ
-const canvasWidth = ref(1024);
-const canvasHeight = ref(1024);
-
 // Live2Dモデルの設定
 // モデルのホームディレクトリとファイル名を定義
 const modelName = ref('Mao');
@@ -124,22 +124,6 @@ const motionGroupName = ref<string>('Idle');
 const motionIndex = ref<number | null>(0);
 // 表情のインデックス
 const expressionIndex = ref<number | null>(null);
-
-/**
- * アセットのロード完了時の処理
- * @param assets - ロードされたCubismモデルのアセット
- */
-function assetsLoaded(assets: CubismModelAssets) {
-  if (!assets.modelSetting) {
-    console.error('Failed to load model setting');
-    return;
-  }
-  console.log('Assets loaded');
-
-  motionGroupName.value = 'Idle';
-  motionIndex.value = 0;
-  expressionIndex.value = null;
-}
 
 // 音声合成のテキスト
 const speechText = ref('');
@@ -187,8 +171,7 @@ onUpdated(() => {
                   <!-- 背景画像の描画 -->
                   <VCubismSpriteRenderer :src="'/Resources/back_class_normal.png'" />
                   <!-- モデルアセットを読み込み提供 -->
-                  <VCubismModelAssetsProvider @loaded="assetsLoaded" :model-home-dir="modelHomeDir"
-                    :model-file-name="modelFileName">
+                  <VCubismModelAssetsProvider :model-home-dir="modelHomeDir" :model-file-name="modelFileName">
                     <!-- モデルの更新処理 -->
                     <VCubismUpdateModel>
                       <!-- モーションの更新処理 -->
@@ -234,7 +217,7 @@ onUpdated(() => {
           </div>
         </div>
         <form @submit.prevent="onSubmit" class="flex p-2 border-t border-gray-700">
-          <input type="text" v-model="text" placeholder="メッセージを入力..."
+          <input type="text" v-model="inputText" placeholder="メッセージを入力..."
             class="bg-slate-200 dark:bg-slate-800 border border-gray-300 rounded-l px-4 py-2 flex-1" />
           <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">送信</button>
         </form>
