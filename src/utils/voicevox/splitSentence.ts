@@ -7,6 +7,6 @@
  */
 export function splitSentence(text: string): string[] {
   // 句読点や改行で文を区切るための正規表現
-  const pattern = /(?<=[。？！\.\,])|\r?\n/
-  return text.split(pattern)
+  const pattern = /(?<=[。？！\.\,\?\!])(?![。？！\.\,\?\!])/
+  return text.replace(/[\r\n]/g, '').split(pattern)
 }
