@@ -18,12 +18,140 @@ import VCubismUpdateModelMotion from '@/live2d/components/VCubismUpdateModelMoti
 import VCubismUpdateModelPhysics from '@/live2d/components/VCubismUpdateModelPhysics.vue';
 import VCubismViewMatrixProvider from '@/live2d/components/VCubismViewMatrixProvider.vue';
 import { logger } from '@/logger';
-import { CharacterChatWithExpression } from '@/utils/llm/CharacterChatWithExpression';
-import { computed, onUpdated, ref, shallowRef, watch } from 'vue';
+import { CharacterChatWithExpression } from '@/utils/app/CharacterChatWithExpression';
+import { WavFileReader } from '@/utils/audio/WavFileReader';
+import { WavFileWriter } from '@/utils/audio/WavFileWriter';
+import { requestAudioQueries } from '@/utils/voicevox/requestAudioQuery';
+import { requestMultiSynthesis } from '@/utils/voicevox/requestSynthesis';
+import { splitSentence } from '@/utils/voicevox/splitSentence';
+import type { VoiceVoxAudioQuery } from '@/utils/voicevox/type/VoiceVoxAudioQuery';
+import { computed, nextTick, ref, shallowRef, watch } from 'vue';
 
 interface ChatMessage {
   text: string;
   isUser: boolean;
+}
+
+
+class Character {
+  name = ref<string>('');
+  nameJapanese = ref<string>('');
+  homeDir = computed<string>(() => `/Resources/${this.name.value}/`);
+  fileName = computed<string>(() => `${this.name.value}.model3.json`);
+  text = ref<string>('');
+  motionGroupName = ref<string>('Idle');
+  motionIndex = ref<number>(0);
+  expressionIndex = ref<number | null>(null);
+  voiceSpeaker = ref<number>(0);
+  audioQueries = ref<VoiceVoxAudioQuery[]>([]);
+  speedScale = ref<number>(1.2);
+  audio = shallowRef<HTMLAudioElement>(new Audio());
+  x = ref<number>(0);
+  y = ref<number>(0);
+  scale = ref<number>(1);
+  /**
+   * キャラクター喋らせる処理
+   */
+  async speak(text: string, expressionType: string | null) {
+    this.text.value = text;
+    const audioQueries = await requestAudioQueries(splitSentence(this.text.value), this.voiceSpeaker.value);
+    for (const query of audioQueries) {
+      query.speedScale = this.speedScale.value;
+    }
+    const buffers = await requestMultiSynthesis(audioQueries, this.voiceSpeaker.value);
+    const waves = buffers.map((buffer) => new WavFileReader(buffer));
+    const wav = new WavFileWriter(waves[0].getFormat());
+    wav.append(waves)
+    this.releaseAudio();
+    this.audio.value.src = URL.createObjectURL(new Blob([wav.getBuffer()], { type: 'audio/wav' }));
+    this.audio.value.play();
+    this.audioQueries.value = audioQueries;
+    this.setExpression(expressionType);
+  }
+
+  /**
+   * 口パク終了したときの処理
+   */
+  onSpeakEnded() {
+    this.text.value = '';
+    this.audioQueries.value = [];
+  }
+
+  /**
+   * オーディオを停止して解放
+   */
+  releaseAudio() {
+    const blobUrl = this.audio.value.src;
+    this.audio.value.currentTime = 0;
+    this.audio.value.src = '';
+    if (blobUrl) {
+      URL.revokeObjectURL(blobUrl);
+    }
+  }
+
+  /**
+   * 表情タイプからモーションと表情のインデックスを設定
+   */
+  setExpression(expression: string | null) {
+    switch (expression) {
+      case 'happy':
+        this.expressionIndex.value = 1;
+        this.motionGroupName.value = 'TapBody';
+        this.motionIndex.value = 2;
+        break;
+
+      case 'sad':
+        this.expressionIndex.value = 4;
+        this.motionGroupName.value = 'TapBody';
+        this.motionIndex.value = 1;
+        break;
+
+      case 'angry':
+        this.expressionIndex.value = 7;
+        this.motionGroupName.value = 'TapBody';
+        this.motionIndex.value = 0;
+        break;
+
+      case 'surprised':
+        this.expressionIndex.value = 6;
+        this.motionGroupName.value = 'Idle';
+        this.motionIndex.value = 0;
+        break;
+
+      case 'blush':
+        this.expressionIndex.value = 5;
+        this.motionGroupName.value = 'TapBody';
+        this.motionIndex.value = 1;
+        break;
+
+      case 'normal':
+      default:
+        this.expressionIndex.value = 0;
+        this.motionGroupName.value = 'Idle';
+        this.motionIndex.value = 0;
+        break;
+    }
+  }
+
+  constructor(
+    name: string,
+    nameJapanese: string,
+    options: {
+      x?: number,
+      y?: number,
+      scale?: number,
+      voiceSpeaker?: number,
+    } = {}) {
+    this.name.value = name;
+    this.nameJapanese.value = nameJapanese;
+    this.audio.value.onended = () => {
+      this.releaseAudio();
+    };
+    this.x.value = options.x ?? this.x.value;
+    this.y.value = options.y ?? this.y.value;
+    this.scale.value = options.scale ?? this.scale.value;
+    this.voiceSpeaker.value = options.voiceSpeaker ?? this.voiceSpeaker.value;
+  }
 }
 
 // canvasのサイズ
@@ -63,48 +191,10 @@ async function onSubmit() {
     logger.debug('Received response:', response);
 
     if (response.text) {
-      speechText.value = response.text;
       // キャラクターの応答を追加
       chatMessages.value.push({ text: response.text, isUser: false });
       // 表情とモーションを設定
-      switch (response.expression) {
-        case 'happy':
-          expressionIndex.value = 1;
-          motionGroupName.value = 'TapBody';
-          motionIndex.value = 2;
-          break;
-
-        case 'sad':
-          expressionIndex.value = 4;
-          motionGroupName.value = 'TapBody';
-          motionIndex.value = 1;
-          break;
-
-        case 'angry':
-          expressionIndex.value = 7;
-          motionGroupName.value = 'TapBody';
-          motionIndex.value = 0;
-          break;
-
-        case 'surprised':
-          expressionIndex.value = 6;
-          motionGroupName.value = 'Idle';
-          motionIndex.value = 0;
-          break;
-
-        case 'blush':
-          expressionIndex.value = 5;
-          motionGroupName.value = 'TapBody';
-          motionIndex.value = 1;
-          break;
-
-        case 'normal':
-        default:
-          expressionIndex.value = 0;
-          motionGroupName.value = 'Idle';
-          motionIndex.value = 0;
-          break;
-      }
+      mao.value.speak(response.text, response.expression);
     }
   } catch (error) {
     logger.error('Error getting response:', error);
@@ -114,44 +204,29 @@ async function onSubmit() {
 
 // Live2Dモデルの設定
 // モデルのホームディレクトリとファイル名を定義
-const modelName = ref('Mao');
-const modelHomeDir = computed<string>(() => `/Resources/${modelName.value}/`);
-const modelFileName = computed<string>(() => `${modelName.value}.model3.json`);
-
-// モーショングループ名
-const motionGroupName = ref<string>('Idle');
-// モーションのインデックス
-const motionIndex = ref<number | null>(0);
-// 表情のインデックス
-const expressionIndex = ref<number | null>(null);
-
-// 音声合成のテキスト
-const speechText = ref('');
-/**
- * 音声合成が終了したときの処理
- */
-function onSpeechEnd() {
-  speechText.value = ''; // テキストをクリア
-}
+const mao = shallowRef<Character>(new Character('Mao', 'マオ', {
+  x: 0,
+  y: -0.9,
+  scale: 3,
+  voiceSpeaker: 3,
+}));
 
 // チャットボックスのスクロール制御
-const chatBox = ref<HTMLElement | null>(null);
+const chatBox = ref<HTMLDivElement | null>(null);
 const shouldScrollChat = ref(false);
 watch(() => chatMessages.value.length, () => {
   shouldScrollChat.value = true;
-});
-onUpdated(() => {
-  if (shouldScrollChat.value) {
-    chatBox.value?.scrollTo({ top: chatBox.value.scrollHeight, behavior: 'smooth' });
+  nextTick(() => {
+    chatBox.value?.scrollTo({ top: chatBox.value?.scrollHeight, behavior: 'smooth' });
     shouldScrollChat.value = false;
-  }
+  });
 });
 </script>
 
 <template>
   <section class="flex flex-col h-[calc(100vh-10rem)] min-h-64 overflow-hidden">
     <header class="pb-4 block">
-      <h2 class="text-gray-600 dark:text-gray-200 text-xl py-4">LLMとのチャットとモデルの制御</h2>
+      <h2 class="py-4">LLMとのチャットとモデルの制御</h2>
       <p class="text-gray-500 dark:text-gray-400">
         ユーザーの入力に応じてLLMが返答し、Function CallingによってLive2Dモデルの表情とモーションを制御します。
       </p>
@@ -171,7 +246,8 @@ onUpdated(() => {
                   <!-- 背景画像の描画 -->
                   <VCubismSpriteRenderer :src="'/Resources/back_class_normal.png'" />
                   <!-- モデルアセットを読み込み提供 -->
-                  <VCubismModelAssetsProvider :model-home-dir="modelHomeDir" :model-file-name="modelFileName">
+                  <VCubismModelAssetsProvider v-for="character in [mao]" :key="character.name.value"
+                    :model-home-dir="character.homeDir.value" :model-file-name="character.fileName.value">
                     <!-- モデルの更新処理 -->
                     <VCubismUpdateModel>
                       <!-- モーションの更新処理 -->
@@ -186,17 +262,20 @@ onUpdated(() => {
                       <!-- 表情の更新処理 -->
                       <VCubismUpdateModelExpression />
                       <!-- 音声合成とリップシンク -->
-                      <VVoicevoxLipsync :text="speechText" :speaker="3" :speed-scale="1.2" @ended="onSpeechEnd" />
+                      <VVoicevoxLipsync :audio-queries="character.audioQueries.value"
+                        @ended="character.onSpeakEnded()" />
                     </VCubismUpdateModel>
                     <!-- モデル座標設定用の行列を提供 -->
-                    <VCubismModelMatrixProvider :scale-x="3" :scale-y="3" :translate-x="0" :translate-y="-0.9">
+                    <VCubismModelMatrixProvider :scale-x="character.scale.value" :scale-y="character.scale.value"
+                      :translate-x="character.x.value" :translate-y="character.y.value">
                       <!-- モデルのレンダー処理 -->
                       <VCubismModelAssetsRenderer />
                     </VCubismModelMatrixProvider>
                     <!-- モーションを管理するコンポーネント -->
-                    <VCubismMotionManager :group="motionGroupName" :index="motionIndex" />
+                    <VCubismMotionManager :group="character.motionGroupName.value"
+                      :index="character.motionIndex.value" />
                     <!-- 表情を管理するコンポーネント -->
-                    <VCubismExpressionManager :index="expressionIndex" />
+                    <VCubismExpressionManager :index="character.expressionIndex.value" />
                   </VCubismModelAssetsProvider>
                 </VCubismRenderLoopProvider>
               </VCubismViewMatrixProvider>
@@ -217,9 +296,8 @@ onUpdated(() => {
           </div>
         </div>
         <form @submit.prevent="onSubmit" class="flex p-2 border-t border-gray-700">
-          <input type="text" v-model="inputText" placeholder="メッセージを入力..."
-            class="bg-slate-200 dark:bg-slate-800 border border-gray-300 rounded-l px-4 py-2 flex-1" />
-          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">送信</button>
+          <input type="text" v-model="inputText" placeholder="メッセージを入力..." class="flex-1" />
+          <button type="submit" class="primary">送信</button>
         </form>
       </div>
     </div>

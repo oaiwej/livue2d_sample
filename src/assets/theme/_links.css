@@ -1,0 +1,71 @@
+@import './base.css';
+
+a {
+  color: var(--color-link-800);
+
+  &:hover {
+    color: var(--color-link-700);
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: var(--color-link-900);
+  }
+
+  &:focus {
+    color: var(--color-link-600);
+  }
+
+  &.primary,
+  &.secondary,
+  &.error,
+  &.success,
+  &.warning,
+  &.info {
+    color: var(--color-theme-500);
+
+    &:hover {
+      color: var(--color-theme-600);
+    }
+
+    &:active {
+      color: var(--color-theme-700);
+    }
+  }
+}
+
+/* ダークモード */
+@media (prefers-color-scheme: dark) {
+  a {
+    color: var(--color-link-300);
+
+    &:hover {
+      color: var(--color-link-200);
+    }
+
+    &:active {
+      color: var(--color-link-100);
+    }
+
+    &:focus {
+      color: var(--color-link-400);
+    }
+
+    &.primary,
+    &.secondary,
+    &.error,
+    &.success,
+    &.warning,
+    &.info {
+      color: var(--color-theme-500);
+
+      &:hover {
+        color: var(--color-theme-600);
+      }
+
+      &:active {
+        color: var(--color-theme-700);
+      }
+    }
+  }
+}

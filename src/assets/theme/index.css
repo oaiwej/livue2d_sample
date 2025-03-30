@@ -1,0 +1,10 @@
+/**
+ * index.css
+ * 
+ * テーマ関連のスタイルをまとめるエントリーポイント
+ */
+@import './base.css';
+@import './_buttons.css';
+@import './_inputs.css';
+@import './_links.css';
+@import './_typography.css';

@@ -120,141 +120,141 @@ const showHitBox = ref<boolean>(false);
 <template>
   <section>
     <header class="pb-4">
-      <h2 class="text-gray-600 dark:text-gray-200 text-xl py-4">Live2Dのサンプルアセット・ギャラリー</h2>
+      <h2 class="py-4">Live2Dのサンプルアセット・ギャラリー</h2>
       <p class="text-gray-500 dark:text-gray-400">
         Live2Dのサンプルアセットを表示し、モーションや表情を確認できます。
       </p>
     </header>
+    <div class="character-container flex flex-col md:flex-row gap-4">
+      <div class="rounded-lg overflow-hidden relative">
+        <Transition>
+          <div v-if="text" class="absolute top-1 left-1 text-white">
+            {{ text }}
+          </div>
+        </Transition>
+        <!-- フレームワーク初期化 -->
+        <VCubismFramework>
+          <!-- WebGL描画用のCanvasをマウントし、WebGLコンテキストを提供 -->
+          <VCubismCanvasWebGLProvider class="w-full" style="aspect-ratio: 9/16;" width="720" height="1280">
+            <!-- プロジェクション行列を提供 -->
+            <VCubismProjectionMatrixProvider>
+              <!-- ViewMatrixを提供 -->
+              <VCubismViewMatrixProvider>
+                <!-- 描画ループを提供 -->
+                <VCubismRenderLoopProvider :fps="30">
+                  <!-- モデルアセットを読み込み提供 -->
+                  <VCubismModelAssetsProvider @loaded="assetsLoaded" :model-home-dir="modelHomeDir"
+                    :model-file-name="modelFileName">
+                    <!-- モデルの更新処理 -->
+                    <VCubismUpdateModel>
+                      <!-- モーションの更新処理 -->
+                      <VCubismUpdateModelMotion>
+                        <!-- まばたきの更新処理 -->
+                        <VCubismUpdateModelEyeBlink />
+                      </VCubismUpdateModelMotion>
+                      <!-- 呼吸の更新処理 -->
+                      <VCubismUpdateModelBreath />
+                      <!-- 物理演算の更新処理 -->
+                      <VCubismUpdateModelPhysics />
+                      <!-- 表情の更新処理 -->
+                      <VCubismUpdateModelExpression />
+                    </VCubismUpdateModel>
+                    <!-- モデル座標設定用の行列を提供 -->
+                    <VCubismModelMatrixProvider :scale-x="Number(scale)" :scale-y="Number(scale)"
+                      :translate-x="Number(translateX)" :translate-y="Number(translateY)">
+                      <!-- モデルのレンダー処理 -->
+                      <VCubismModelAssetsRenderer />
+                      <VCubismHitAreaRenderer v-if="showHitBox" />
+                      <VCubismHitManager @hit="onHit" />
+                    </VCubismModelMatrixProvider>
+                    <!-- モーションを管理するコンポーネント -->
+                    <VCubismMotionManager :group="motionGroupName" :index="motionIndex" :loop="true" />
+                    <!-- 表情を管理するコンポーネント -->
+                    <VCubismExpressionManager :index="expressionIndex" />
+                  </VCubismModelAssetsProvider>
+                </VCubismRenderLoopProvider>
+              </VCubismViewMatrixProvider>
+            </VCubismProjectionMatrixProvider>
+          </VCubismCanvasWebGLProvider>
+        </VCubismFramework>
+      </div>
+      <div class="controls flex flex-col gap-2">
+        <!-- モデル選択用のUIコンポーネント -->
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
+          <div class="flex flex-col space-y-2">
+            <label for="modelSelect" class="text-gray-700 dark:text-gray-300">Character Model</label>
+            <select id="modelSelect" v-model="selectedModel" @change="changeModel(selectedModel)" class="p-2">
+              <option v-for="model in ModelDir" :key="model" :value="model">
+                {{ model }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <!-- モーション制御用のUIコンポーネント -->
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
+          <div class="flex flex-col space-y-2">
+            <label for="motionGroup" class="text-gray-700 dark:text-gray-300">Motion Group</label>
+            <select id="motionGroup" v-model="proxyMotionGroupName" @change="motionIndex = 0" class="p-2">
+              <option v-for="groupName in motionGroupNames" :key="groupName" :value="groupName">
+                {{ groupName }}
+              </option>
+            </select>
+          </div>
+          <div class="flex flex-col space-y-2">
+            <label for="motionIndex" class="text-gray-700 dark:text-gray-300">Motion</label>
+            <select id="motionIndex" v-model="motionIndex" class="p-2">
+              <option :value="null">Stop</option>
+              <option v-for="motion in currentGroupMotions" :key="motion.filename" :value="motion.index">
+                {{ motion.filename }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <!-- 表情制御用のUIコンポーネント -->
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
+          <div class="flex flex-col space-y-2">
+            <label for="expression" class="text-gray-700 dark:text-gray-300">Expression
+            </label>
+            <select id="expression" v-model="expressionIndex" class="p-2">
+              <option :value="null">None</option>
+              <option v-for="expression in expressionList" :key="expression.index" :value="expression.index">
+                {{ expression.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <!-- モデルの拡大縮小と移動用のUIコンポーネント -->
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
+          <div class="flex flex-col space-y-2">
+            <label for="scale" class="text-gray-700 dark:text-gray-300">Scale: {{
+              scale }}
+            </label>
+            <input id="scale" type="range" v-model="scale" min="0.5" max="3" step="0.1" class="p-2" />
+          </div>
+          <div class="flex flex-col space-y-2">
+            <label for="translateX" class="text-gray-700 dark:text-gray-300">Translate
+              X: {{
+                translateX }}</label>
+            <input id="translateX" type="range" v-model="translateX" min="-1" max="1" step="0.1" class="p-2" />
+          </div>
+          <div class="flex flex-col space-y-2">
+            <label for="translateY" class="text-gray-700 dark:text-gray-300">Translate Y: {{
+              translateY }}</label>
+            <input id="translateY" type="range" v-model="translateY" min="-1" max="1" step="0.1" class="p-2" />
+          </div>
+        </div>
+        <!-- ヒットエリア表示用のUIコンポーネント -->
+        <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
+          <div class="flex flex-row-reverse justify-center items-center gap-2">
+            <label for="displayHitArea" class="text-gray-700 dark:text-gray-300">Display
+              Hit
+              Area</label>
+            <input id="displayHitArea" type="checkbox" v-model="showHitBox" class="p-2 w-4 h-4" />
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
-  <div class="character-container flex flex-col md:flex-row gap-4">
-    <div class="rounded-lg overflow-hidden relative">
-      <Transition>
-        <div v-if="text" class="absolute top-1 left-1 text-white">
-          {{ text }}
-        </div>
-      </Transition>
-      <!-- フレームワーク初期化 -->
-      <VCubismFramework>
-        <!-- WebGL描画用のCanvasをマウントし、WebGLコンテキストを提供 -->
-        <VCubismCanvasWebGLProvider class="w-full" style="aspect-ratio: 9/16;" width="720" height="1280">
-          <!-- プロジェクション行列を提供 -->
-          <VCubismProjectionMatrixProvider>
-            <!-- ViewMatrixを提供 -->
-            <VCubismViewMatrixProvider>
-              <!-- 描画ループを提供 -->
-              <VCubismRenderLoopProvider :fps="30">
-                <!-- モデルアセットを読み込み提供 -->
-                <VCubismModelAssetsProvider @loaded="assetsLoaded" :model-home-dir="modelHomeDir"
-                  :model-file-name="modelFileName">
-                  <!-- モデルの更新処理 -->
-                  <VCubismUpdateModel>
-                    <!-- モーションの更新処理 -->
-                    <VCubismUpdateModelMotion>
-                      <!-- まばたきの更新処理 -->
-                      <VCubismUpdateModelEyeBlink />
-                    </VCubismUpdateModelMotion>
-                    <!-- 呼吸の更新処理 -->
-                    <VCubismUpdateModelBreath />
-                    <!-- 物理演算の更新処理 -->
-                    <VCubismUpdateModelPhysics />
-                    <!-- 表情の更新処理 -->
-                    <VCubismUpdateModelExpression />
-                  </VCubismUpdateModel>
-                  <!-- モデル座標設定用の行列を提供 -->
-                  <VCubismModelMatrixProvider :scale-x="Number(scale)" :scale-y="Number(scale)"
-                    :translate-x="Number(translateX)" :translate-y="Number(translateY)">
-                    <!-- モデルのレンダー処理 -->
-                    <VCubismModelAssetsRenderer />
-                    <VCubismHitAreaRenderer v-if="showHitBox" />
-                    <VCubismHitManager @hit="onHit" />
-                  </VCubismModelMatrixProvider>
-                  <!-- モーションを管理するコンポーネント -->
-                  <VCubismMotionManager :group="motionGroupName" :index="motionIndex" :loop="true" />
-                  <!-- 表情を管理するコンポーネント -->
-                  <VCubismExpressionManager :index="expressionIndex" />
-                </VCubismModelAssetsProvider>
-              </VCubismRenderLoopProvider>
-            </VCubismViewMatrixProvider>
-          </VCubismProjectionMatrixProvider>
-        </VCubismCanvasWebGLProvider>
-      </VCubismFramework>
-    </div>
-    <div class="controls flex flex-col gap-2">
-      <!-- モデル選択用のUIコンポーネント -->
-      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
-        <div class="flex flex-col space-y-2">
-          <label for="modelSelect" class="text-gray-700 dark:text-gray-300">Character Model</label>
-          <select id="modelSelect" v-model="selectedModel" @change="changeModel(selectedModel)"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-            <option v-for="model in ModelDir" :key="model" :value="model">
-              {{ model }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <!-- モーション制御用のUIコンポーネント -->
-      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
-        <div class="flex flex-col space-y-2">
-          <label for="motionGroup" class="text-gray-700 dark:text-gray-300">Motion Group</label>
-          <select id="motionGroup" v-model="proxyMotionGroupName" @change="motionIndex = 0"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-            <option v-for="groupName in motionGroupNames" :key="groupName" :value="groupName">
-              {{ groupName }}
-            </option>
-          </select>
-        </div>
-        <div class="flex flex-col space-y-2">
-          <label for="motionIndex" class="text-gray-700 dark:text-gray-300">Motion</label>
-          <select id="motionIndex" v-model="motionIndex"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-            <option :value="null">Stop</option>
-            <option v-for="motion in currentGroupMotions" :key="motion.filename" :value="motion.index">
-              {{ motion.filename }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <!-- 表情制御用のUIコンポーネント -->
-      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
-        <div class="flex flex-col space-y-2">
-          <label for="expression" class="text-gray-700 dark:text-gray-300">Expression</label>
-          <select id="expression" v-model="expressionIndex"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-            <option :value="null">None</option>
-            <option v-for="expression in expressionList" :key="expression.index" :value="expression.index">
-              {{ expression.name }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <!-- モデルの拡大縮小と移動用のUIコンポーネント -->
-      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
-        <div class="flex flex-col space-y-2">
-          <label for="scale" class="text-gray-700 dark:text-gray-300">Scale: {{ scale }}</label>
-          <input id="scale" type="range" v-model="scale" min="0.5" max="3" step="0.1"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300" />
-        </div>
-        <div class="flex flex-col space-y-2">
-          <label for="translateX" class="text-gray-700 dark:text-gray-300">Translate X: {{ translateX }}</label>
-          <input id="translateX" type="range" v-model="translateX" min="-1" max="1" step="0.1"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300" />
-        </div>
-        <div class="flex flex-col space-y-2">
-          <label for="translateY" class="text-gray-700 dark:text-gray-300">Translate Y: {{ translateY }}</label>
-          <input id="translateY" type="range" v-model="translateY" min="-1" max="1" step="0.1"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300" />
-        </div>
-      </div>
-      <!-- ヒットエリア表示用のUIコンポーネント -->
-      <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 gap-4">
-        <div class="flex flex-row-reverse justify-center items-center gap-2">
-          <label for="displayHitArea" class="text-gray-700 dark:text-gray-300">Display Hit Area</label>
-          <input id="displayHitArea" type="checkbox" v-model="showHitBox"
-            class="p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-4 h-4" />
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <style scoped>

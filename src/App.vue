@@ -3,8 +3,8 @@ import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
-  <header class="bg-gray-800 py-4">
-    <h1 class="dark: text-white text-center text-2xl font-bold">Livue2D sample app</h1>
+  <header class="bg-gray-100 dark:bg-gray-800 py-4">
+    <h1 class="text-center">Livue2D sample app</h1>
     <div class="max-w-6xl mx-auto px-4">
       <nav class="flex justify-center">
         <RouterLink to="/gallary"
@@ -22,6 +22,10 @@ import { RouterLink, RouterView } from 'vue-router';
         <RouterLink to="/llm-chat"
           class="px-4 py-2 text-gray-300 hover:text-white font-medium mx-2 rounded hover:bg-gray-700 transition-colors">
           LLM Chat</RouterLink>
+
+        <RouterLink to="/video-render"
+          class="px-4 py-2 text-gray-300 hover:text-white font-medium mx-2 rounded hover:bg-gray-700 transition-colors">
+          Video Render</RouterLink>
       </nav>
     </div>
   </header>

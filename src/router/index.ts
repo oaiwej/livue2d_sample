@@ -2,6 +2,7 @@ import GallaryView from '@/views/GallaryView.vue'
 import LlmChatView from '@/views/LlmChatView.vue'
 import MultiCharacterView from '@/views/MultiCharacterView.vue'
 import NovelGameView from '@/views/NovelGameView.vue'
+import VideoRenderView from '@/views/VideoRenderView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/llm-chat',
       name: 'LLMChat',
       component: LlmChatView,
+    },
+    {
+      path: '/video-render',
+      name: 'VideoRender',
+      component: VideoRenderView,
     },
   ],
 })

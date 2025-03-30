@@ -9,11 +9,12 @@
  *     - モデルの更新処理を行う
  */
 import { logger } from '@/logger';
-import { onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, provide, ref } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLProgram, ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
-export type UpdateFunction = (deltaTime: number) => void;
-export type RenderFunction = () => void
+export type UpdateFunction = (deltaTime: number) => void | Promise<void>;
+export type RenderFunction = (deltaTime: number) => void | Promise<void>;
+export type PostRenderFunction = (deltaTime: number) => void | Promise<void>;
 
 const props = withDefaults(defineProps<{
   fps?: number;
@@ -22,10 +23,11 @@ const props = withDefaults(defineProps<{
 });
 
 const initialized = ref(false);
-const intervalId = ref<ReturnType<typeof setInterval> | null>(null);
+const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null);
 const previouseTime = ref<number>(Date.now());
 const updateFunctions = ref<UpdateFunction[]>([]);
 const renderFunctions = ref<{ render: RenderFunction, zIndex: number }[]>([]);
+const postRenderFunctions = ref<PostRenderFunction[]>([]);
 export type CubismUpdateEvent = { deltaTime: number };
 export type CubismRenderEvent = { gl: WebGLRenderingContext, programId: WebGLProgram };
 const emit = defineEmits<{
@@ -40,7 +42,7 @@ const gl = safeInject<ProvidedWebGLRenderingContext>('WebGLRenderingContext');
 // WebGLProgramを親コンポーネントから取得
 const programId = safeInject<ProvidedWebGLProgram>('WebGLProgram');
 
-
+//----------------------------------------------------------------------
 // 更新関数を登録するための関数を提供
 const cubismModelUpdateFunctions = ref<UpdateFunction[]>([]);
 export type ProvidedRegisterUpdateFunction = (updateFunc: UpdateFunction) => void;
@@ -57,6 +59,7 @@ provide<ProvidedUnregisterUpdateFunction>('UnregisterUpdateFunction', (updateFun
   }
 });
 
+//----------------------------------------------------------------------
 // レンダリング関数を登録するための関数を提供
 export type ProvidedRegisterRenderFunction = (renderFunc: RenderFunction, zIndex?: number) => void;
 provide<ProvidedRegisterRenderFunction>('RegisterRenderFunction', (renderFunc: RenderFunction, zIndex: number = 0) => {
@@ -70,10 +73,26 @@ provide<ProvidedUnregisterRenderFunction>('UnregisterRenderFunction', (renderFun
   renderFunctions.value = renderFunctions.value.filter(func => func.render !== renderFunc);
 });
 
+//----------------------------------------------------------------------
+// レンダリング後の関数を登録するための関数を提供
+export type ProvidedRegisterPostRenderFunction = (renderFunc: PostRenderFunction) => void;
+provide<ProvidedRegisterPostRenderFunction>('RegisterPostRenderFunction', (renderFunc: PostRenderFunction) => {
+  postRenderFunctions.value.push(renderFunc);
+});
+
+// レンダリング後の関数を登録解除するための関数を提供
+export type ProvidedUnregisterPostRenderFunction = (renderFunc: PostRenderFunction) => void;
+provide<ProvidedUnregisterPostRenderFunction>('UnregisterPostRenderFunction', (renderFunc: PostRenderFunction) => {
+  postRenderFunctions.value = postRenderFunctions.value.filter(func => func !== renderFunc);
+});
+
+//----------------------------------------------------------------------
+
+
 /**
  * 登録されたすべての更新関数を実行する
  */
-function update() {
+async function update() {
   if (!initialized.value) {
     return;
   }
@@ -88,9 +107,13 @@ function update() {
   const currentTime = Date.now();
   const deltaTime = (currentTime - previouseTime.value) / 1000.0;
   emit('updating', { deltaTime }); // 更新イベントを発火
-  updateFunctions.value.forEach(updateFunc => updateFunc(deltaTime));
+  await updateFunctions.value.reduce((prev, current) => {
+    return prev.then(() => current(deltaTime));
+  }, Promise.resolve());
   previouseTime.value = currentTime;
   emit('updated', { deltaTime }); // 更新イベントを発火
+
+  if (!initialized.value) return;
 
   // 画面の初期化
   gl.value.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -117,31 +140,47 @@ function update() {
   emit('rendering', { gl: gl.value, programId: programId.value });
 
   // 登録されたすべてのレンダリング関数を実行する
-  renderFunctions.value.forEach(({ render }) => render());
+  await renderFunctions.value.reduce((prev, current) => {
+    return prev.then(() => current.render(deltaTime));
+  }, Promise.resolve());
 
   // レンダリングイベントを発火
   emit('rendered', { gl: gl.value, programId: programId.value });
+
+  if (!initialized.value) return;
+
+  // 登録されたすべてのレンダリング後の関数を実行する
+  await postRenderFunctions.value.reduce((prev, current) => {
+    return prev.then(() => current(deltaTime));
+  }, Promise.resolve());
+
+}
+
+// 更新関数の終了を待機するためのPromise
+const updatePromise = ref<Promise<void>>(Promise.resolve());
+async function wrapUpdate() {
+  // 破棄処理用にPromiseを保持
+  updatePromise.value = update();
+  updatePromise.value.finally(() => {
+    // 次のフレームをスケジュール
+    if (initialized.value) {
+      timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
+    }
+  });
+  return updatePromise.value;
 }
 
 // WebGLコンテキストとプログラムの初期化
 onMounted(() => {
-  intervalId.value = setInterval(update, 1000 / props.fps);
+  timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
   initialized.value = true;
 });
 
 // コンポーネントがアンマウントされたときの処理
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
   initialized.value = false;
-  if (intervalId.value) {
-    clearInterval(intervalId.value);
-  }
-});
-
-// fpsプロパティの変更を監視
-watch(() => props.fps, (fps: number) => {
-  if (intervalId.value) {
-    clearInterval(intervalId.value);
-    intervalId.value = setInterval(update, 1000 / fps);
+  if (timeoutId.value) {
+    clearTimeout(timeoutId.value);
   }
 });
 </script>

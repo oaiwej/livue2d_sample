@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
-import { onBeforeUnmount, onMounted, provide, ref, shallowRef, watch, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, provide, ref, shallowRef, type Ref } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 
@@ -33,21 +33,31 @@ function updateProjectionMatrix() {
   projectionMatrix.value.scale(height / width, 1.0);
 }
 
+const observer = ref<ResizeObserver | null>(null);
 // コンポーネントがDOMにマウントされたときの処理
 onMounted(() => {
   // 初期化完了フラグを設定
   initialized.value = true;
   updateProjectionMatrix();
+  // ResizeObserverを作成してcanvasのサイズ変更を監視
+  observer.value = new ResizeObserver(() => {
+    updateProjectionMatrix();
+  });
+  // canvasのサイズ変更を監視
+  if (gl.value) {
+    const canvas = gl.value.canvas as HTMLCanvasElement;
+    observer.value.observe(canvas);
+  }
 });
 
 // コンポーネントがDOMからアンマウントされるときの処理
 onBeforeUnmount(() => {
   // 初期化状態を未初期化に戻す
   initialized.value = false;
-});
-
-// コンポーネントが更新されたときの処理
-watch(() => [gl.value?.canvas.width, gl.value?.canvas.height], () => {
-  updateProjectionMatrix();
+  // ResizeObserverを解除
+  if (observer.value) {
+    observer.value.disconnect();
+    observer.value = null;
+  }
 });
 </script>

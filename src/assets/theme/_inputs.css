@@ -1,0 +1,147 @@
+@import './base.css';
+
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='tel'],
+input[type='number'],
+input[type='url'],
+input[type='search'],
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'],
+input[type='file'],
+textarea,
+select {
+  min-height: 2.7rem;
+  padding: 0.5rem 0.5rem;
+  border-radius: 0.375rem;
+  border-width: 1px;
+  border-style: solid;
+
+  color: var(--color-text-700);
+  background-color: var(--color-bg-50);
+  border-color: var(--color-theme-300);
+
+  &:hover {
+    border-color: var(--color-theme-400);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1 var(--color-theme-400);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+
+input[type='checkbox'],
+input[type='radio'] {
+  color: var(--color-text-100);
+  background-color: var(--color-theme-200);
+  border-color: var(--color-theme-900);
+
+  &:hover {
+    border-color: var(--color-theme-400);
+  }
+
+  &:focus {
+    border-color: var(--color-theme-500);
+  }
+
+  &:checked {
+    background-color: var(--color-theme-500);
+    border-color: var(--color-theme-900);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+input[type='range'] {
+  color: var(--color-text-700);
+  background-color: var(--color-theme-100);
+
+  &:hover {
+    background-color: var(--color-theme-200);
+  }
+
+  &:focus {
+    background-color: var(--color-theme-500);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+}
+
+/* ダークモード */
+@media (prefers-color-scheme: dark) {
+
+  input[type='text'],
+  input[type='password'],
+  input[type='email'],
+  input[type='tel'],
+  input[type='number'],
+  input[type='url'],
+  input[type='search'],
+  input[type='date'],
+  input[type='time'],
+  input[type='datetime-local'],
+  input[type='file'],
+  textarea,
+  select {
+    color: var(--color-text-300);
+    background-color: var(--color-bg-900);
+    border-color: var(--color-theme-600);
+
+    &:hover {
+      border-color: var(--color-theme-400);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 1 var(--color-theme-400);
+    }
+  }
+
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  color: var(--color-text-100);
+  background-color: var(--color-theme-900);
+  border-color: var(--color-theme-600);
+
+  &:hover {
+    border-color: var(--color-theme-400);
+  }
+
+  &:focus {
+    border-color: var(--color-primary-700);
+  }
+
+  &:checked {
+    background-color: var(--color-primary-700);
+    border-color: var(--color-theme-900);
+  }
+}
+
+input[type='range'] {
+  color: var(--color-text-300);
+  background-color: var(--color-theme-900);
+
+  &:hover {
+    background-color: var(--color-theme-800);
+  }
+
+  &:focus {
+    background-color: var(--color-primary-700);
+  }
+}
