@@ -4,7 +4,7 @@ export interface VoiceVoxSpeakerStyle {
   type: 'talk'
 }
 
-export interface ViceVoxSupportedFeatures {
+export interface VoiceVoxSupportedFeatures {
   permitted_synthesis_morphing: 'ALL' | 'SELF_ONLY' | 'NOTHING'
 }
 
@@ -13,7 +13,7 @@ export interface VoiceVoxSpeaker {
   speaker_uuid: string
   styles: VoiceVoxSpeakerStyle[]
   version: string
-  supported_features: ViceVoxSupportedFeatures
+  supported_features: VoiceVoxSupportedFeatures
 }
 
 export type VoiceVoxSpeakersResponse = VoiceVoxSpeaker[]
