@@ -1,0 +1,90 @@
+@import './base.css';
+
+button,
+input[type='button'],
+input[type='submit'] {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border-radius: 0.375rem;
+
+  color: var(--color-text-300);
+  background-color: var(--color-theme-800);
+  border-color: var(--color-theme-800);
+
+  &:hover {
+    background-color: var(--color-theme-700);
+    border-color: var(--color-theme-700);
+  }
+
+  &:active {
+    background-color: var(--color-theme-900);
+    border-color: var(--color-theme-900);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.primary,
+  &.secondary,
+  &.error,
+  &.success,
+  &.warning,
+  &.info {
+    background-color: var(--color-theme-500);
+    border-color: var(--color-theme-800);
+
+    &:hover {
+      background-color: var(--color-theme-600);
+      border-color: var(--color-theme-700);
+    }
+
+    &:active {
+      background-color: var(--color-theme-800);
+      border-color: var(--color-theme-900);
+    }
+  }
+}
+
+/* ダークモード */
+@media (prefers-color-scheme: dark) {
+
+  button,
+  input[type='button'],
+  input[type='submit'] {
+    color: var(--color-text-300);
+    background-color: var(--color-theme-900);
+    border-color: var(--color-theme-900);
+
+    &:hover {
+      background-color: var(--color-theme-700);
+      border-color: var(--color-theme-700);
+    }
+
+    &:active {
+      background-color: var(--color-theme-950);
+      border-color: var(--color-theme-950);
+    }
+
+    &.primary,
+    &.secondary,
+    &.error,
+    &.success,
+    &.warning,
+    &.info {
+      background-color: var(--color-theme-800);
+      border-color: var(--color-theme-800);
+
+      &:hover {
+        background-color: var(--color-theme-700);
+        border-color: var(--color-theme-700);
+      }
+
+      &:active {
+        background-color: var(--color-theme-900);
+        border-color: var(--color-theme-900);
+      }
+    }
+  }
+}

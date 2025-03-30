@@ -1,13 +1,15 @@
 import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
 
+export type MotionGroupName = string
+
 export interface MotionInfo {
-  group: string
+  group: MotionGroupName
   filename: string
   index: number
 }
 
 export interface MotionCollection {
-  [key: string]: MotionInfo[]
+  [key: MotionGroupName]: MotionInfo[]
 }
 
 export function getMotionCollection(modelSetting: ICubismModelSetting): MotionCollection {

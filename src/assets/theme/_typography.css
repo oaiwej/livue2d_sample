@@ -1,0 +1,75 @@
+@import './base.css';
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+label {
+  color: var(--color-text-800);
+
+  &.primary,
+  &.secondary,
+  &.error,
+  &.success,
+  &.warning,
+  &.info {
+    color: var(--color-theme-800);
+  }
+}
+
+/* ダークモード */
+@media (prefers-color-scheme: dark) {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div,
+  label {
+    color: var(--color-text-300);
+
+    &.primary,
+    &.secondary,
+    &.error,
+    &.success,
+    &.warning,
+    &.info {
+      color: var(--color-theme-300);
+    }
+  }
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+p,
+span,
+div,
+label {
+  font-size: 1rem;
+  font-weight: 400;
+}

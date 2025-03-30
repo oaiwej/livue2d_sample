@@ -5,13 +5,14 @@ import type {
   ChatCompletionToolMessageParam,
 } from 'openai/resources/index.mjs'
 import type { ChatCompletionUserMessageParam } from 'openai/src/resources/index.js'
-import { model, openai } from './openai'
+import { model, openai } from '../llm/openai'
+import type { ExpressionType } from './type/ExpressionType'
 
 /**
  * キャラクターの表情を変更する関数の引数
  */
 export interface ChangeCharacterExpressionArgs {
-  expressionType: 'normal' | 'happy' | 'sad' | 'angry' | 'surprised' | 'blush'
+  expressionType: ExpressionType
 }
 
 /**

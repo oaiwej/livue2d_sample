@@ -1,6 +1,6 @@
 import type { VoiceVoxAccentPhrase } from './VoiceVoxAccentPhrase'
 
-export interface VoiceVoxQueryData {
+export interface VoiceVoxAudioQuery {
   accent_phrases: VoiceVoxAccentPhrase[]
   speedScale: number
   pitchScale: number

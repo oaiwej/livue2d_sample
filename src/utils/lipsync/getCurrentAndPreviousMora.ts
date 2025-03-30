@@ -7,11 +7,7 @@ import type { VoiceVoxMora } from '../voicevox/type/VoiceVoxMora'
  * @param elapsedTime 経過時間（秒）
  * @returns 現在と直前の音素情報およびそれらの時間位置
  */
-export function getCurrentAndPreviousMora(
-  moras: VoiceVoxMora[],
-  elapsedTime: number,
-  speedScale: number = 1.0,
-) {
+export function getCurrentAndPreviousMora(moras: VoiceVoxMora[], elapsedTime: number) {
   let currentMora: VoiceVoxMora | null = null
   let currentMoraTime = 0
   let previousMora: VoiceVoxMora | null = null
@@ -22,7 +18,7 @@ export function getCurrentAndPreviousMora(
   for (const mora of moras) {
     // 子音と母音の長さを合計して音素の総時間を計算
     // totalTime += mora.vowel_length + (mora.consonant_length ?? 0)
-    totalTime += (mora.vowel_length + (mora.consonant_length ?? 0)) * (1.0 / speedScale)
+    totalTime += mora.vowel_length + (mora.consonant_length ?? 0)
 
     // 撥音「ん」と無音の場合は無視
     if (mora.vowel === 'N' || mora.vowel === 'cl') {

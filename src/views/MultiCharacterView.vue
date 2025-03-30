@@ -16,46 +16,120 @@ import VCubismUpdateModelEyeBlink from '@/live2d/components/VCubismUpdateModelEy
 import VCubismUpdateModelMotion from '@/live2d/components/VCubismUpdateModelMotion.vue';
 import VCubismUpdateModelPhysics from '@/live2d/components/VCubismUpdateModelPhysics.vue';
 import VCubismViewMatrixProvider from '@/live2d/components/VCubismViewMatrixProvider.vue';
-import { computed, ref } from 'vue';
+import { WavFileReader } from '@/utils/audio/WavFileReader';
+import { WavFileWriter } from '@/utils/audio/WavFileWriter';
+import { requestAudioQueries } from '@/utils/voicevox/requestAudioQuery';
+import { requestMultiSynthesis } from '@/utils/voicevox/requestSynthesis';
+import { splitSentence } from '@/utils/voicevox/splitSentence';
+import type { VoiceVoxAudioQuery } from '@/utils/voicevox/type/VoiceVoxAudioQuery';
+import { computed, ref, shallowRef } from 'vue';
 
-const mao = ref<string>('Mao');
-const maoHomeDir = computed<string>(() => `/Resources/${mao.value}/`);
-const maoFileName = computed<string>(() => `${mao.value}.model3.json`);
-const maoText = ref<string>('');
-const maoMotionGroupName = ref<string>('Idle');
-const maoMotionIndex = ref<number>(0);
-const maoVoiceSpeaker = ref<number>(1);
-const hiyori = ref<string>('Hiyori');
-const hiyoriHomeDir = computed<string>(() => `/Resources/${hiyori.value}/`);
-const hiyoriFileName = computed<string>(() => `${hiyori.value}.model3.json`);
-const hiyoriText = ref<string>('');
-const hiyoriMotionGroupName = ref<string>('Idle');
-const hiyoriMotionIndex = ref<number>(0);
-const hiyoriVoiceSpeaker = ref<number>(0);
+class Character {
+  name = ref<string>('');
+  nameJapanese = ref<string>('');
+  homeDir = computed<string>(() => `/Resources/${this.name.value}/`);
+  fileName = computed<string>(() => `${this.name.value}.model3.json`);
+  text = ref<string>('');
+  motionGroupName = ref<string>('Idle');
+  motionIndex = ref<number>(0);
+  voiceSpeaker = ref<number>(0);
+  audioQueries = ref<VoiceVoxAudioQuery[]>([]);
+  audio = shallowRef<HTMLAudioElement>(new Audio());
+  x = ref<number>(0);
+  y = ref<number>(0);
+  scale = ref<number>(1);
+  touchMotionGroupName = ref<string>('TapBody');
+  touchMotionIndex = ref<number>(0);
+  /**
+   * キャラクターをタップしたときの処理
+   */
+  async onHit() {
+    this.text.value = `こんにちは、私は${this.nameJapanese.value}です。`;
+    this.audioQueries.value = await requestAudioQueries(splitSentence(this.text.value), this.voiceSpeaker.value);
+    for (const query of this.audioQueries.value) {
+      query.speedScale = 1.2;
+    }
+    const buffers = await requestMultiSynthesis(this.audioQueries.value, this.voiceSpeaker.value);
+    const waves = buffers.map((buffer) => new WavFileReader(buffer));
+    const wav = new WavFileWriter(waves[0].getFormat());
+    wav.append(waves)
+    this.releaseAudio();
+    this.audio.value.src = URL.createObjectURL(new Blob([wav.getBuffer()], { type: 'audio/wav' }));
+    this.audio.value.play();
+    this.motionGroupName.value = this.touchMotionGroupName.value;
+    this.motionIndex.value = this.touchMotionIndex.value;
+  }
+  /**
+   * 口パク終了したときの処理
+   */
+  onSpeakEnded() {
+    this.text.value = '';
+    this.audioQueries.value = [];
+  }
 
-function onHitMao() {
-  maoText.value = 'こんにちは、私はマオです。';
-  maoMotionGroupName.value = 'TapBody';
-  maoMotionIndex.value = 2;
-}
-function onMaoVoiceEnded() {
-  maoText.value = '';
+  /**
+   * オーディオを停止して解放
+   */
+  releaseAudio() {
+    const blobUrl = this.audio.value.src;
+    this.audio.value.currentTime = 0;
+    this.audio.value.src = '';
+    if (blobUrl) {
+      URL.revokeObjectURL(blobUrl);
+    }
+  }
+
+
+  constructor(
+    name: string,
+    nameJapanese: string,
+    options: {
+      x?: number,
+      y?: number,
+      scale?: number,
+      voiceSpeaker?: number,
+      touchMotionGroupName?: string,
+      touchMotionIndex?: number,
+    } = {}) {
+    this.name.value = name;
+    this.nameJapanese.value = nameJapanese;
+    this.audio.value.onended = () => {
+      this.releaseAudio();
+    };
+    this.x.value = options.x ?? this.x.value;
+    this.y.value = options.y ?? this.y.value;
+    this.scale.value = options.scale ?? this.scale.value;
+    this.voiceSpeaker.value = options.voiceSpeaker ?? this.voiceSpeaker.value;
+    this.touchMotionGroupName.value = options.touchMotionGroupName ?? this.touchMotionGroupName.value;
+    this.touchMotionIndex.value = options.touchMotionIndex ?? this.touchMotionIndex.value;
+  }
 }
 
-function onHitHiyori() {
-  hiyoriText.value = 'こんにちは、私はヒヨリです。';
-  hiyoriMotionGroupName.value = 'TapBody';
-  hiyoriMotionIndex.value = 0;
-}
-function onHiyoriVoiceEnded() {
-  hiyoriText.value = '';
-}
+const mao = shallowRef<Character>(new Character('Mao', 'マオ', {
+  x: -0.7,
+  y: -0.9,
+  scale: 3,
+  voiceSpeaker: 1,
+  touchMotionGroupName: 'TapBody',
+  touchMotionIndex: 2
+}));
+
+const hiyori = shallowRef<Character>(new Character('Hiyori', 'ヒヨリ', {
+  x: 0.7,
+  y: -0.9,
+  scale: 3,
+  voiceSpeaker: 0,
+  touchMotionGroupName: 'TapBody',
+  touchMotionIndex: 0
+}));
+
+const characters = shallowRef<Character[]>([mao.value, hiyori.value]);
 </script>
 
 <template>
   <section>
     <header class="pb-4">
-      <h2 class="text-gray-600 dark:text-gray-200 text-xl py-4">複数のキャラクター</h2>
+      <h2 class="py-4">複数のキャラクター</h2>
       <p class="text-gray-500 dark:text-gray-400">
         一つのCanvasにキャラクターを複数表示し、タップするとそれぞれのキャラクターが反応します。
       </p>
@@ -73,7 +147,8 @@ function onHiyoriVoiceEnded() {
                 <!-- 描画ループを提供 -->
                 <VCubismRenderLoopProvider :fps="30">
                   <!-- モデルアセットを読み込み提供 -->
-                  <VCubismModelAssetsProvider :model-home-dir="maoHomeDir" :model-file-name="maoFileName">
+                  <VCubismModelAssetsProvider v-for="character in characters" :key="character.name.value"
+                    :model-home-dir="character.homeDir.value" :model-file-name="character.fileName.value">
                     <!-- モデルの更新処理 -->
                     <VCubismUpdateModel>
                       <!-- モーションの更新処理 -->
@@ -87,46 +162,20 @@ function onHiyoriVoiceEnded() {
                       <!-- 表情の更新処理 -->
                       <VCubismUpdateModelExpression />
                       <!-- 音声合成とリップシンク -->
-                      <VVoicevoxLipsync :speaker="maoVoiceSpeaker" :text="maoText" @ended="onMaoVoiceEnded" />
+                      <VVoicevoxLipsync :audio-queries="character.audioQueries.value"
+                        @ended="character.onSpeakEnded()" />
                     </VCubismUpdateModel>
                     <!-- モデル座標設定用の行列を提供 -->
-                    <VCubismModelMatrixProvider :scaleX="3" :scaleY="3" :translateX="-0.7" :translateY="-0.9">
+                    <VCubismModelMatrixProvider :scaleX="character.scale.value" :scaleY="character.scale.value"
+                      :translateX="character.x.value" :translateY="character.y.value">
                       <!-- モデルのレンダー処理 -->
                       <VCubismModelAssetsRenderer />
-                      <VCubismHitManager @hit="onHitMao" />
+                      <VCubismHitManager @hit="character.onHit()" />
                     </VCubismModelMatrixProvider>
                     <!-- モーションを管理するコンポーネント -->
-                    <VCubismMotionManager :group="maoMotionGroupName" :index="maoMotionIndex"
-                      :loop="maoMotionGroupName === 'Idle'"
-                      @motion-finished="maoMotionGroupName = 'Idle'; maoMotionIndex = 0;" />
-                    <!-- 表情を管理するコンポーネント -->
-                    <!-- <VCubismExpressionManager :index="expressionIndex" /> -->
-                  </VCubismModelAssetsProvider>
-
-                  <!-- モデルアセットを読み込み提供 -->
-                  <VCubismModelAssetsProvider :model-home-dir="hiyoriHomeDir" :model-file-name="hiyoriFileName">
-                    <!-- モデルの更新処理 -->
-                    <VCubismUpdateModel>
-                      <!-- モーションの更新処理 -->
-                      <VCubismUpdateModelMotion>
-                        <VCubismUpdateModelEyeBlink />
-                        <VCubismUpdateModelBreath />
-                        <VCubismUpdateModelPhysics />
-                      </VCubismUpdateModelMotion>
-                      <!-- 表情の更新処理 -->
-                      <VCubismUpdateModelExpression />
-                      <VVoicevoxLipsync :speaker="hiyoriVoiceSpeaker" :text="hiyoriText" @ended="onHiyoriVoiceEnded" />
-                    </VCubismUpdateModel>
-                    <!-- モデル座標設定用の行列を提供 -->
-                    <VCubismModelMatrixProvider :scaleX="3" :scaleY="3" :translateX="0.7" :translateY="-0.9">
-                      <!-- モデルのレンダー処理 -->
-                      <VCubismModelAssetsRenderer />
-                      <VCubismHitManager @hit="onHitHiyori" />
-                    </VCubismModelMatrixProvider>
-                    <!-- モーションを管理するコンポーネント -->
-                    <VCubismMotionManager :group="hiyoriMotionGroupName" :index="hiyoriMotionIndex"
-                      :loop="hiyoriMotionGroupName === 'Idle'"
-                      @motion-finished="hiyoriMotionGroupName = 'Idle'; hiyoriMotionIndex = 0;" />
+                    <VCubismMotionManager :group="character.motionGroupName.value" :index="character.motionIndex.value"
+                      :loop="character.motionGroupName.value === 'Idle'"
+                      @motion-finished="character.motionGroupName.value = 'Idle'; character.motionIndex.value = 0;" />
                     <!-- 表情を管理するコンポーネント -->
                     <!-- <VCubismExpressionManager :index="expressionIndex" /> -->
                   </VCubismModelAssetsProvider>

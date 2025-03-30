@@ -1,4 +1,4 @@
-import type { VoiceVoxQueryData } from '@/utils/voicevox/type/VoiceVoxQueryData'
+import type { VoiceVoxAudioQuery } from '@/utils/voicevox/type/VoiceVoxAudioQuery'
 import type { VoiceVoxMora } from './type/VoiceVoxMora'
 
 /**
@@ -8,7 +8,8 @@ import type { VoiceVoxMora } from './type/VoiceVoxMora'
  * @param queryData VOICEVOXのクエリデータ
  * @returns 無音を含む音素データの配列
  */
-export function createMorasWithPauses(queryData: VoiceVoxQueryData): VoiceVoxMora[] {
+export function createMorasWithPauses(queryData: VoiceVoxAudioQuery): VoiceVoxMora[] {
+  const speedScale = queryData.speedScale
   const moras: VoiceVoxMora[] = []
 
   // 発話前の無音区間を表す音素
@@ -37,16 +38,23 @@ export function createMorasWithPauses(queryData: VoiceVoxQueryData): VoiceVoxMor
   // アクセント句ごとの音素情報を追加
   for (const accent_phrase of queryData.accent_phrases) {
     // 各アクセント句の音素データを追加
-    moras.push(...accent_phrase.moras)
+    moras.push(...accent_phrase.moras.map((mora) => ({ ...mora })))
 
     // 句読点などによる一時停止がある場合はそれも追加
     if (accent_phrase.pause_mora) {
-      moras.push(accent_phrase.pause_mora)
+      moras.push({ ...accent_phrase.pause_mora })
     }
   }
 
   // 発話後の無音を追加
   moras.push(postPhonemePauseMora)
 
+  // 速度を反映
+  for (const mora of moras) {
+    mora.vowel_length /= speedScale
+    if (mora.consonant_length !== null) {
+      mora.consonant_length /= speedScale
+    }
+  }
   return moras
 }

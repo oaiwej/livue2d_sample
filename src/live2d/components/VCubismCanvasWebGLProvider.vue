@@ -16,14 +16,11 @@
 import { createShader } from '@/live2d/webgl/createShader';
 import { logger } from '@/logger';
 import { onBeforeUnmount, onMounted, onUnmounted, provide, ref, shallowRef, type Ref } from 'vue';
-export type UpdateFunction = (deltaTime: number) => void;
-export type RenderFunction = () => void
 
 const initialized = ref(false);
 const canvas = shallowRef<HTMLCanvasElement | null>(null);
 const glContext = shallowRef<WebGLRenderingContext | null>(null);
 const programId = shallowRef<WebGLProgram | null>(null);
-const intervalId = ref<ReturnType<typeof setInterval> | null>(null);
 
 // WebGLコンテキストを提供
 export type ProvidedWebGLRenderingContext = Ref<WebGLRenderingContext | null>;
@@ -51,9 +48,6 @@ onMounted(() => {
 // コンポーネントがアンマウントされるときの処理
 onBeforeUnmount(() => {
   initialized.value = false;
-  if (intervalId.value) {
-    clearInterval(intervalId.value);
-  }
 });
 
 // コンポーネントがアンマウントされたときの処理
