@@ -111,6 +111,7 @@ async function onSubmitSrt() {
     // SRTファイルを読み込み
     waitMessage.value = 'SRTファイルを読み込み中...'
     const srt = await loadSrt(file)
+    logger.info('SRTファイルを読み込みました', srt)
     paragraphs.value = await paragraphsFromSrt(srt, defaultParagraph.value)
   }
   else {
@@ -434,7 +435,8 @@ onBeforeUnmount(() => {
                           :audio-queries="currentParagraph.audioQueries" />
                       </VCubismUpdateModel>
                       <!-- モデル座標設定用の行列を提供 -->
-                      <VCubismModelMatrixProvider :scale-x="3" :scale-y="3" :translate-x="0" :translate-y="-0.9">
+                      <VCubismModelMatrixProvider :scale-x="viewSetting.scale" :scale-y="viewSetting.scale"
+                        :translate-x="viewSetting.translateX" :translate-y="viewSetting.translateY">
                         <!-- モデルのレンダー処理 -->
                         <VCubismModelAssetsRenderer />
                       </VCubismModelMatrixProvider>
@@ -479,10 +481,10 @@ onBeforeUnmount(() => {
         <button type="button" @click="state = 'LoadFile'">Back</button>
         <div class="flex-1"></div>
         <span>Download:</span>
-        <a v-if="videoUrl" :href="videoUrl" download class="px-2">Video</a>
-        <a v-if="audioUrl" :href="audioUrl" download class="px-2">Audio</a>
-        <a v-if="srtUrl" :href="srtUrl" download class="px-2">SRT</a>
-        <a v-if="vttUrl" :href="vttUrl" download class="px-2">VTT</a>
+        <a v-if="videoUrl" :href="videoUrl" download="video.mkv" class="px-2">Video</a>
+        <a v-if="audioUrl" :href="audioUrl" download="audio.wav" class="px-2">Audio</a>
+        <a v-if="srtUrl" :href="srtUrl" download="subtitle.srt" class="px-2">SRT</a>
+        <a v-if="vttUrl" :href="vttUrl" download="subtitle.vtt" class="px-2">VTT</a>
       </div>
     </div>
   </section>
