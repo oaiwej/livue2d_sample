@@ -11,10 +11,10 @@ export function loadSrt(file: File): Promise<Srt> {
     reader.onload = (event) => {
       const srtText = event.target?.result as string
       const segments: Srt = srtText
-        .split(/\r?\n\r?\n/)
+        .split(/(?:\r?\n){2,}/)
         .filter((segment) => {
           return segment.match(
-            /^\d+\r?\n\d{1,2}:\d{2}:\d{2}(?:,\d{1,3})? --> \d{1,2}:\d{2}:\d{2}(?:,\d{1,3})?\r?\n/,
+            /^\d+\r?\n\d{1,2}:\d{2}:\d{2}(?:,\d{1,3})? --> \d{1,2}:\d{2}:\d{2}(?:,\d{1,3})?/,
           )
         })
         .map((segment) => {
@@ -26,7 +26,6 @@ export function loadSrt(file: File): Promise<Srt> {
             text: lines.slice(2).join('\n'),
           }
         })
-      console.log(segments)
       resolve(segments)
     }
     reader.onerror = (event) => {

@@ -38,41 +38,11 @@ const videoEncoder = shallowRef<VideoEncoder | null>(null);
 const encodeOptions = shallowRef<VideoEncoderEncodeOptions>({});
 // タイムスタンプ
 const timestamp = ref(0);
-// 前回のキュー待ち
-const prevQueue = ref<Promise<void>>(Promise.resolve());
 
 /**
  * フレームをエンコードする
  */
 async function encodeFrame(deltaTime: number) {
-  if (!initialized.value) {
-    return;
-  }
-  if (!gl.value) {
-    logger.error('WebGLRenderingContext is not found');
-    return;
-  }
-  if (!videoEncoder.value) {
-    logger.error('VideoEncoder is not found');
-    return;
-  }
-
-  // 前回のエンコードが完了するまで待機
-  await prevQueue.value;
-  // ondequeueイベントを待機するPromiseを作成し、queueが積み重ならないようにする
-  prevQueue.value = new Promise((resolve, reject) => {
-    if (videoEncoder.value?.encodeQueueSize === 0) {
-      resolve();
-    }
-    videoEncoder.value?.addEventListener('dequeue', () => {
-      resolve();
-    }, { once: true });
-    // タイムアウト
-    setTimeout(() => {
-      reject();
-    }, 10000);
-  });
-
   if (!initialized.value) {
     return;
   }
@@ -93,7 +63,10 @@ async function encodeFrame(deltaTime: number) {
   finally {
     frame.close();
   }
-  await videoEncoder.value.flush();
+  // キューが積み上がっている場合は、フラッシュする
+  if (videoEncoder.value.encodeQueueSize > (props.config.framerate ?? 30)) {
+    await videoEncoder.value.flush();
+  }
 
   // マイクロ秒単位のタイムスタンプを更新
   timestamp.value += deltaTime * 1_000_000;

@@ -46,7 +46,7 @@ export async function makeAudioEncoderConfig(config: Omit<AudioEncoderConfig, 'c
   config: AudioEncoderConfig | null
 }> {
   // 試行するコーデックの優先順位リスト
-  const codecPriorityOrder: AudioCodecTag[] = ['flac', 'opus', 'aac', 'vorbis', 'mp3']
+  const codecPriorityOrder: AudioCodecTag[] = ['aac', 'vorbis', 'mp3', 'opus', 'flac']
   const codecs: AudioCodecOption[] = codecPriorityOrder.map((tag) => ({
     codec: CODEC_MAP[tag].str,
   }))
