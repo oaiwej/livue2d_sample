@@ -11,7 +11,7 @@ Live2DのモデルをVue.jsで表示するサンプルです。
 1. リポジトリをクローンします。
 
 ```powershell
-git clone https://github.com/oaiwej/livue2d_sample.git
+git clone -b develop https://github.com/oaiwej/livue2d_sample.git
 cd livue2d_sample
 ```
 
