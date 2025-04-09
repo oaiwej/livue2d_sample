@@ -9,7 +9,7 @@ import { requestSynthesis } from '@/utils/voicevox/requestSynthesis';
 import { splitSentence } from '@/utils/voicevox/splitSentence';
 import type { VoiceVoxSpeakersResponse } from '@/utils/voicevox/type/VoiceVoxSpeakers';
 import { v4 as uuid } from 'uuid';
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
 
 const paragraphs = defineModel<Paragraph[]>({
@@ -40,6 +40,16 @@ onMounted(async () => {
 
 // ----------------------------------------
 const currentParagraph = ref<Paragraph | null>(null);
+// 段落の開始時間と終了時間を監視
+watch(() => [...paragraphs.value.map(p => p.start), ...paragraphs.value.map(p => p.end)], () => {
+  // 時間を再計算
+  paragraphs.value.reduce((prev, paragraph) => {
+    const duration = paragraph.end - paragraph.start;
+    paragraph.start = prev;
+    paragraph.end = prev + duration;
+    return paragraph.end;
+  }, 0);
+});
 
 function onFocusParagraph(paragraph: Paragraph) {
   currentParagraph.value = paragraph;
@@ -63,28 +73,43 @@ function onKeydownEnter(e: KeyboardEvent, paragraph: Paragraph) {
   if (e.shiftKey) {
     return; // 改行
   }
-  loadAudioQueries(paragraph).then(() => {
-    if (!paragraph.audioQueries) {
-      return;
-    }
-    // 音声合成
-    const duration = getDurationFromAudioQueries(paragraph.audioQueries) ?? 0;
-    const durationMs = Math.round(duration * 1000);
-    paragraph.end = paragraph.start + durationMs + props.padTime;
+  // Enter
+  const promise = paragraph.text.trim() === ''
+    ? Promise.resolve()            // 空の場合はパディングと見なす
+    : loadAudioQueries(paragraph); // 音声合成クエリを取得
 
-    const index = paragraphs.value.indexOf(paragraph);
-    if (index === paragraphs.value.length - 1) {
-      paragraphs.value.push({
+  // 最後の段落の場合は、次の段落を追加 または Ctrl + Enter で追加
+  const shouldAddParagraph = paragraphs.value.indexOf(paragraph) === paragraphs.value.length - 1 || isCtrlDown(e);
+
+  promise.then(() => {
+    if (paragraph.audioQueries) {
+      // 再生時間を計算
+      const duration = getDurationFromAudioQueries(paragraph.audioQueries) ?? 0;
+      const durationMs = Math.round(duration * 1000);
+      paragraph.end = paragraph.start + durationMs + props.padTime;
+    }
+
+    // 次の段落を追加
+    if (shouldAddParagraph) {
+      const newParagraph = {
         ...paragraph,
         id: uuid(),
         text: '',
         start: paragraph.end,
         end: paragraph.end + 10_000,
         audioQueries: null,
+      };
+      paragraphs.value.splice(paragraphs.value.indexOf(paragraph) + 1, 0, newParagraph);
+      // フォーカス
+      nextTick(() => {
+        document.getElementById(newParagraph.id)?.focus();
       });
     }
     else {
-      document.getElementById(paragraphs.value[index + 1].id)?.focus();
+      // フォーカス
+      nextTick(() => {
+        document.getElementById(paragraphs.value[paragraphs.value.indexOf(paragraph) + 1].id)?.focus();
+      });
     }
   });
   e.preventDefault();
@@ -119,6 +144,10 @@ function onKeydownArrow(e: KeyboardEvent, paragraph: Paragraph) {
 
       // 上に移動
       paragraphs.value.splice(index - 1, 0, paragraphs.value.splice(index, 1)[0]);
+      // フォーカス
+      nextTick(() => {
+        document.getElementById(paragraphs.value[index - 1].id)?.focus();
+      });
       e.preventDefault();
     }
     else if (e.key === 'ArrowDown' && index < paragraphs.value.length - 1) {
@@ -133,6 +162,10 @@ function onKeydownArrow(e: KeyboardEvent, paragraph: Paragraph) {
       paragraphs.value[index].end = end2;
       // 下に移動
       paragraphs.value.splice(index + 1, 0, paragraphs.value.splice(index, 1)[0]);
+      // フォーカス
+      nextTick(() => {
+        document.getElementById(paragraphs.value[index + 1].id)?.focus();
+      });
       e.preventDefault();
     }
   }
@@ -222,8 +255,9 @@ async function playSampleVoice(paragraph: Paragraph) {
         <div class="flex flex-row gap-2 w-full py-2">
           <div class="flex flex-col gap-2 w-full">
             <label class="text-sm">キー操作</label>
-            <p class="text-sm">Enter: 次の行を追加</p>
+            <p class="text-sm">Enter: 次の行</p>
             <p class="text-sm">Shift + Enter: 改行</p>
+            <p class="text-sm">Ctrl + Enter: 次の行を追加</p>
             <p class="text-sm">Ctrl + Backspace: 行を削除</p>
             <p class="text-sm">Ctrl + ↑↓: 行を移動</p>
           </div>

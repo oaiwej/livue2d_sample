@@ -16,7 +16,7 @@ export interface Paragraph {
 export const DEFAULT_PARAGRAPH: Paragraph = {
   id: uuid(),
   start: 0,
-  end: 0,
+  end: 10_000,
   expressionType: 'auto',
   text: '',
   speaker: 3,
