@@ -27,14 +27,16 @@ export class CharacterChatWithExpression {
       type: 'function',
       function: {
         name: 'change_character_expression',
-        description: "Change the character's expression",
+        description:
+          "Change the character's expression to one of the predefined types. This function is used to visually represent the character's emotional state during the conversation.",
         parameters: {
           type: 'object',
           properties: {
             expressionType: {
               type: 'string',
               enum: ['normal', 'happy', 'sad', 'angry', 'surprised', 'blush'],
-              description: 'Expression',
+              description:
+                'The type of expression to change to. Must be one of the following: "normal", "happy", "sad", "angry", "surprised", or "blush".',
             },
           },
           required: ['expressionType'],
@@ -51,7 +53,7 @@ export class CharacterChatWithExpression {
     `,
   }
   // 会話履歴の数がこの数以上になったら要約する
-  protected summarizeLength = 5
+  protected summarizeLength = 10
   // 会話履歴を要約するためのシステムメッセージ
   protected summarizeSystemMessage: ChatCompletionSystemMessageParam = {
     role: 'system',
@@ -75,7 +77,7 @@ export class CharacterChatWithExpression {
    */
   constructor(
     systemMessages: ChatCompletionSystemMessageParam[] = [],
-    summarizeLength: number = 5,
+    summarizeLength: number = 10,
   ) {
     this.systemMessages = systemMessages
     this.summarizeLength = summarizeLength
@@ -151,7 +153,7 @@ export class CharacterChatWithExpression {
           // ツールレスポンスを含めて再度APIリクエスト
           const response = await openai.chat.completions.create({
             model,
-            messages: [...systemMessages, ...this.conversationHistory, toolMessage],
+            messages: [...systemMessages, ...this.conversationHistory],
             temperature: 0.7,
           })
 

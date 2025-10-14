@@ -33,7 +33,7 @@ import { DEFAULT_EXPRESSION_MAP, type ExpressionMap, type ExpressionMapValue } f
 import { DEFAULT_PARAGRAPH, type Paragraph } from '@/utils/app/type/Paragraph';
 import type { ViewSetting } from '@/utils/app/type/ViewSetting';
 import { makeAudioEncoderConfig } from '@/utils/encoder/makeAudioEncoderConfig';
-import { makeVideoEncoderConfig } from '@/utils/encoder/makeVideoEncoderConfig';
+import { makeVideoEncoderConfig, VIDEO_CODECS } from '@/utils/encoder/makeVideoEncoderConfig';
 import { formatSrtTime } from '@/utils/subtitle/srt/formatSrtTime';
 import { loadSrt } from '@/utils/subtitle/srt/loadSrt';
 import { getDurationFromAudioQueries } from '@/utils/voicevox/getDurationFromAudioQuery';
@@ -201,12 +201,11 @@ async function startRender() {
 
 // Videoエンコーダー情報
 const videoCodec = ref<Awaited<ReturnType<typeof makeVideoEncoderConfig>> | null>(null)
+const qp = computed<number>(() => videoCodec.value?.codecInfo?.defaultQP ?? VIDEO_CODECS.hvc1.defaultQP)
 // Audioエンコーダー情報
 const audioCodec = ref<Awaited<ReturnType<typeof makeAudioEncoderConfig>> | null>(null)
 // マルチプレクサ
 const muxer = shallowRef<Muxer<ArrayBufferTarget> | null>(null)
-// ビデオエンコーダーの出力を受け取るバッファ
-const videoBuffer = shallowRef<ArrayBufferTarget>(new ArrayBufferTarget())
 // ビデオエンコーダーの初期化
 async function initEncoder() {
   // サポートされているビデオコーデックを取得
@@ -224,6 +223,7 @@ async function initEncoder() {
   if (!videoCodec.value.config) {
     throw new Error('Failed to get video encoder config')
   }
+
   // サポートされているオーディオコーデックを取得
   const audioQuery = paragraphs.value.find(paragraph => paragraph.audioQueries?.length)?.audioQueries?.[0]
   audioCodec.value = await makeAudioEncoderConfig({
@@ -239,7 +239,7 @@ async function initEncoder() {
 
   // マルチプレクサを初期化
   muxer.value = new Muxer({
-    target: videoBuffer.value,
+    target: new ArrayBufferTarget(),
     type: 'matroska',
     video: {
       width: viewSetting.value.canvasWidth,
@@ -319,6 +319,7 @@ async function onRendered() {
   audioEncoder.close()
 
   // マルチプレクサを終了
+  waitMessage.value = 'マルチプレクサをファイナライズ中...'
   muxer.value?.finalize()
 
   // ビデオとオーディオのURLを作成
@@ -412,7 +413,7 @@ onBeforeUnmount(() => {
                 <VCubismRenderLoopProvider :fps="isModelLoaded ? 1000 : 1">
                   <VVideoDeltaTimeProvider :fps="viewSetting.framerate" @timeupdate="onTimeUpdate">
                     <VVideoRecorder v-if="videoCodec?.config && isModelLoaded" :config="videoCodec.config"
-                      @video-encoder-output="onVideoEncoderOutput" :qp="8">
+                      @video-encoder-output="onVideoEncoderOutput" :qp="qp">
                     </VVideoRecorder>
                     <!-- モデルアセットを読み込み提供 -->
                     <VCubismModelAssetsProvider :model-home-dir="modelHomeDir" :model-file-name="modelFileName"
@@ -441,10 +442,10 @@ onBeforeUnmount(() => {
                         <VCubismModelAssetsRenderer />
                       </VCubismModelMatrixProvider>
                       <!-- モーションを管理するコンポーネント -->
-                      <VCubismMotionManager :group="currentExpression.motionGroupName"
-                        :index="currentExpression.motionIndex" />
+                      <VCubismMotionManager :group="currentExpression?.motionGroupName ?? null"
+                        :index="currentExpression?.motionIndex ?? null" />
                       <!-- 表情を管理するコンポーネント -->
-                      <VCubismExpressionManager :index="currentExpression.expressionIndex" />
+                      <VCubismExpressionManager :index="currentExpression?.expressionIndex ?? null" />
                     </VCubismModelAssetsProvider>
                   </VVideoDeltaTimeProvider>
                 </VCubismRenderLoopProvider>

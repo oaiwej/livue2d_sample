@@ -38,12 +38,16 @@ export async function audioQueriesFromParagraph(
   paragraph: Paragraph,
 ): Promise<VoiceVoxAudioQuery[]> {
   const sentences = splitSentence(paragraph.text)
-  const audioQueries = []
-  for (const sentence of sentences) {
-    const audioQuery = await requestAudioQuery(sentence, paragraph.speaker)
+  const audioQueries = (
+    await Promise.all(
+      sentences.map((sentence) => {
+        return requestAudioQuery(sentence, paragraph.speaker)
+      }),
+    )
+  ).map((audioQuery) => {
     audioQuery.speedScale = paragraph.speedScale
-    audioQueries.push(audioQuery)
-  }
+    return audioQuery
+  })
   return audioQueries
 }
 
@@ -51,11 +55,14 @@ export async function audioFromParagraph(paragraph: Paragraph): Promise<WavFileR
   if (paragraph.audioQueries === null) {
     paragraph.audioQueries = await audioQueriesFromParagraph(paragraph)
   }
-  const wavFiles = []
-  for (const audioQuery of paragraph.audioQueries) {
-    const buffer = await requestSynthesis(audioQuery, paragraph.speaker)
-    wavFiles.push(new WavFileReader(buffer))
-  }
+  const wavFiles = (
+    await Promise.all(
+      paragraph.audioQueries.map((audioQuery) => {
+        return requestSynthesis(audioQuery, paragraph.speaker)
+      }),
+    )
+  ).map((buffer) => new WavFileReader(buffer))
+
   if (wavFiles.length === 0) {
     return null
   }
