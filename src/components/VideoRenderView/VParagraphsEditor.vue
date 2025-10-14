@@ -48,7 +48,7 @@ watch(() => [...paragraphs.value.map(p => p.start), ...paragraphs.value.map(p =>
     paragraph.start = prev;
     paragraph.end = prev + duration;
     return paragraph.end;
-  }, 0);
+  }, paragraphs.value[0]?.start ?? 0);
 });
 
 function onFocusParagraph(paragraph: Paragraph) {
