@@ -13,8 +13,8 @@
  *     - レンダリング処理の管理
  *     - 一定時間ごとに更新処理とレンダリング処理を実行
  */
-import { createShader } from '@/live2d/webgl/createShader';
-import { logger } from '@/logger';
+import { createShader } from '@/livue2d/live2d/webgl/createShader';
+import { logger } from '@/livue2d/logger';
 import { onBeforeUnmount, onMounted, onUnmounted, provide, ref, shallowRef, type Ref } from 'vue';
 
 const initialized = ref(false);

@@ -1,4 +1,4 @@
-import { logger } from '@/logger'
+import { logger } from '@/livue2d/logger'
 
 export function createShader(gl: WebGLRenderingContext): WebGLProgram | null {
   // バーテックスシェーダーのコンパイル

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import VTimestampInput from '@/components/ui/VTimestampInput.vue';
-import { EXPRESSION_TYPES } from '@/utils/app/type/ExpressionType';
-import { DEFAULT_PARAGRAPH, type Paragraph } from '@/utils/app/type/Paragraph';
-import { getDurationFromAudioQueries } from '@/utils/voicevox/getDurationFromAudioQuery';
-import { requestAudioQuery } from '@/utils/voicevox/requestAudioQuery';
-import { requestSpeakers } from '@/utils/voicevox/requestSpeakers';
-import { requestSynthesis } from '@/utils/voicevox/requestSynthesis';
-import { splitSentence } from '@/utils/voicevox/splitSentence';
-import type { VoiceVoxSpeakersResponse } from '@/utils/voicevox/type/VoiceVoxSpeakers';
+import { EXPRESSION_TYPES } from '@/livue2d/utils/app/type/ExpressionType';
+import { DEFAULT_PARAGRAPH, type Paragraph } from '@/livue2d/utils/app/type/Paragraph';
+import { getDurationFromAudioQueries } from '@/livue2d/utils/voicevox/getDurationFromAudioQuery';
+import { requestAudioQuery } from '@/livue2d/utils/voicevox/requestAudioQuery';
+import { requestSpeakers } from '@/livue2d/utils/voicevox/requestSpeakers';
+import { requestSynthesis } from '@/livue2d/utils/voicevox/requestSynthesis';
+import { splitSentence } from '@/livue2d/utils/voicevox/splitSentence';
+import type { VoiceVoxSpeakersResponse } from '@/livue2d/utils/voicevox/type/VoiceVoxSpeakers';
 import { v4 as uuid } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue';
 

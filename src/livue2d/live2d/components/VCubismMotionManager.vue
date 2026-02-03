@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/logger';
+import { logger } from '@/livue2d/logger';
 import type { ACubismMotion } from '@framework/motion/acubismmotion';
 import type { CubismMotionQueueEntry } from '@framework/motion/cubismmotionqueueentry';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';

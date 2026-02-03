@@ -4,19 +4,19 @@ import { inject } from 'vue'
 import VCubismCanvasWebGLProvider from '../VCubismCanvasWebGLProvider.vue'
 
 // モックの設定 - ファクトリー関数内で変数を使わない
-vi.mock('@/live2d/webgl/createShader', () => ({
+vi.mock('@/livue2d/live2d/webgl/createShader', () => ({
   createShader: vi.fn(() => 'mock-program-id'),
 }))
 
-vi.mock('@/logger', () => ({
+vi.mock('@/livue2d/logger', () => ({
   logger: {
     error: vi.fn(),
   },
 }))
 
 // vi.mockの後にインポートする
-import { createShader } from '@/live2d/webgl/createShader'
-import { logger } from '@/logger'
+import { createShader } from '@/livue2d/live2d/webgl/createShader'
+import { logger } from '@/livue2d/logger'
 
 // injectのモックを設定
 vi.mock('vue', async () => {

@@ -13,14 +13,14 @@ vi.mock('@framework/live2dcubismframework', () => ({
 }))
 
 // Loggerのモック
-vi.mock('@/logger', () => ({
+vi.mock('@/livue2d/logger', () => ({
   logger: {
     debug: vi.fn(),
   },
 }))
 
 // インポート文はモックの後に配置
-import { logger } from '@/logger'
+import { logger } from '@/livue2d/logger'
 import { CubismFramework } from '@framework/live2dcubismframework'
 
 describe('VCubismFramework', () => {

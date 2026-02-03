@@ -8,8 +8,8 @@
  * @brief Live2Dモデルのアニメーションループを提供するコンポーネント
  *     - モデルの更新処理を行う
  */
-import { logger } from '@/logger';
-import { onBeforeUnmount, onMounted, provide, ref } from 'vue';
+import { logger } from '@/livue2d/logger';
+import { onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLProgram, ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 export type UpdateFunction = (deltaTime: number) => void | Promise<void>;
@@ -116,7 +116,7 @@ async function update() {
   if (!initialized.value) return;
 
   // 画面の初期化
-  gl.value.clearColor(0.0, 0.0, 0.0, 1.0);
+  gl.value.clearColor(0.0, 0.0, 0.0, 0.0);
 
   // 深度テストを有効化
   gl.value.enable(gl.value.DEPTH_TEST);
@@ -164,15 +164,39 @@ async function wrapUpdate() {
   updatePromise.value.finally(() => {
     // 次のフレームをスケジュール
     if (initialized.value) {
-      timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
+      if (timeoutId.value) {
+        clearTimeout(timeoutId.value);
+        timeoutId.value = null;
+      }
+      if (props.fps > 0) {
+        timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
+      }
     }
   });
   return updatePromise.value;
 }
 
+// fpsが変更されたときの処理
+watch(() => props.fps, (newFps, oldFps) => {
+  if (initialized.value) {
+    if (timeoutId.value) {
+      clearTimeout(timeoutId.value);
+      timeoutId.value = null;
+    }
+    if (oldFps <= 0) {
+      previouseTime.value = Date.now();
+    }
+    if (newFps && newFps > 0) {
+      timeoutId.value = setTimeout(wrapUpdate, 1000 / newFps);
+    }
+  }
+});
+
 // WebGLコンテキストとプログラムの初期化
 onMounted(() => {
-  timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
+  if (props.fps > 0) {
+    timeoutId.value = setTimeout(wrapUpdate, 1000 / props.fps);
+  }
   initialized.value = true;
 });
 

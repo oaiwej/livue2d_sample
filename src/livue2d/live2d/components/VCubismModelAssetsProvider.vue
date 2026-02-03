@@ -22,20 +22,20 @@
  *
  * @emits {('loaded', CubismModelAssets)} - アセットの読み込み完了時に発火するイベント
  */
-import { loadCubismExpression } from '@/live2d/model/loadCubismExpression';
-import { loadCubismMoc } from '@/live2d/model/loadCubismMoc';
-import { loadCubismModel } from '@/live2d/model/loadCubismModel';
-import { loadCubismMotion } from '@/live2d/model/loadCubismMotion';
-import { loadCubismPhysics } from '@/live2d/model/loadCubismPhysics';
-import { loadCubismPose } from '@/live2d/model/loadCubismPose';
-import { loadModelSetting } from '@/live2d/model/loadModelSetting';
-import { loadUserData } from '@/live2d/model/loadUserData';
-import { setupBreath } from '@/live2d/model/setupBreath';
-import { setupEyeBlink } from '@/live2d/model/setupEyeBlink';
-import { setupEyeBlinkIds } from '@/live2d/model/setupEyeBlinkIds';
-import { setupLipsyncIds } from '@/live2d/model/setupLipsyncIds';
-import { setupTextures } from '@/live2d/model/setupTextures';
-import { logger } from '@/logger';
+import { loadCubismExpression } from '@/livue2d/live2d/model/loadCubismExpression';
+import { loadCubismMoc } from '@/livue2d/live2d/model/loadCubismMoc';
+import { loadCubismModel } from '@/livue2d/live2d/model/loadCubismModel';
+import { loadCubismMotion } from '@/livue2d/live2d/model/loadCubismMotion';
+import { loadCubismPhysics } from '@/livue2d/live2d/model/loadCubismPhysics';
+import { loadCubismPose } from '@/livue2d/live2d/model/loadCubismPose';
+import { loadModelSetting } from '@/livue2d/live2d/model/loadModelSetting';
+import { loadUserData } from '@/livue2d/live2d/model/loadUserData';
+import { setupBreath } from '@/livue2d/live2d/model/setupBreath';
+import { setupEyeBlink } from '@/livue2d/live2d/model/setupEyeBlink';
+import { setupEyeBlinkIds } from '@/livue2d/live2d/model/setupEyeBlinkIds';
+import { setupLipsyncIds } from '@/livue2d/live2d/model/setupLipsyncIds';
+import { setupTextures } from '@/livue2d/live2d/model/setupTextures';
+import { logger } from '@/livue2d/logger';
 import type { ICubismModelSetting } from '@framework/icubismmodelsetting';
 import { CubismModelMatrix } from '@framework/math/cubismmodelmatrix';
 import { CubismMoc } from '@framework/model/cubismmoc';

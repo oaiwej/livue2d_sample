@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/logger';
+import { logger } from '@/livue2d/logger';
 import { Constant } from '@framework/live2dcubismframework';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { safeInject } from '../utils/safeInject';

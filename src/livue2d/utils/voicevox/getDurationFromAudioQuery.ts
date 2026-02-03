@@ -1,4 +1,4 @@
-import type { VoiceVoxAudioQuery } from '@/utils/voicevox/type/VoiceVoxAudioQuery'
+import type { VoiceVoxAudioQuery } from '@/livue2d/utils/voicevox/type/VoiceVoxAudioQuery'
 import { createMorasWithPauses } from './createMorasWithPauses'
 
 /**

@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PostRenderFunction, ProvidedRegisterPostRenderFunction, ProvidedRegisterRenderFunction, ProvidedRegisterUpdateFunction, ProvidedUnregisterPostRenderFunction, ProvidedUnregisterRenderFunction, ProvidedUnregisterUpdateFunction, RenderFunction, UpdateFunction } from '@/live2d/components/VCubismRenderLoopProvider.vue';
-import { safeInject } from '@/live2d/utils/safeInject';
+import type { PostRenderFunction, ProvidedRegisterPostRenderFunction, ProvidedRegisterRenderFunction, ProvidedRegisterUpdateFunction, ProvidedUnregisterPostRenderFunction, ProvidedUnregisterRenderFunction, ProvidedUnregisterUpdateFunction, RenderFunction, UpdateFunction } from '@/livue2d/live2d/components/VCubismRenderLoopProvider.vue';
+import { safeInject } from '@/livue2d/live2d/utils/safeInject';
 import { computed, onBeforeUnmount, onMounted, provide, ref } from 'vue';
 
 /**

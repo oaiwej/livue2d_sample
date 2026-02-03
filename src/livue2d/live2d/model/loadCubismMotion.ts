@@ -1,4 +1,4 @@
-import { logger } from '@/logger'
+import { logger } from '@/livue2d/logger'
 import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
 import type { CubismModel } from '@framework/model/cubismmodel'
 import { CubismMotion } from '@framework/motion/cubismmotion'

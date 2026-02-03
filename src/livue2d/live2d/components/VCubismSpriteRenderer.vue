@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/logger';
+import { logger } from '@/livue2d/logger';
 import { Constant } from '@framework/live2dcubismframework';
 import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
 import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';

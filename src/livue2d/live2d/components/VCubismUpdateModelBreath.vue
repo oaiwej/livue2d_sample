@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/logger';
+import { logger } from '@/livue2d/logger';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';
