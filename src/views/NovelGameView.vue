@@ -59,7 +59,7 @@ class Character {
       query.speedScale = this.speedScale.value;
     }
     const buffers = await requestMultiSynthesis(validQueries, this.voiceSpeaker.value);
-    this.audioPlayer.value.prepare(buffers)
+    await this.audioPlayer.value.prepare(buffers)
     this.audioQueries.value = audioQueries;
     this.audioPlayer.value.start(0);
     this.motionGroupName.value = motionGroupName;
@@ -94,7 +94,7 @@ class Character {
     this.name.value = name;
     this.nameJapanese.value = nameJapanese;
     this.audioPlayer.value.onended = () => {
-      this.releaseAudio();
+      this.onSpeakEnded();
     };
     this.x.value = options.x ?? this.x.value;
     this.y.value = options.y ?? this.y.value;
