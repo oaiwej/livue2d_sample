@@ -27,10 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import { EXPRESSION_TYPES } from '@/utils/app/type/ExpressionType';
-import { DEFAULT_PARAGRAPH, type Paragraph } from '@/utils/app/type/Paragraph';
-import { requestSpeakers } from '@/utils/voicevox/requestSpeakers';
-import type { VoiceVoxSpeakersResponse } from '@/utils/voicevox/type/VoiceVoxSpeakers';
+import { EXPRESSION_TYPES } from '@/livue2d/utils/app/type/ExpressionType';
+import { DEFAULT_PARAGRAPH, type Paragraph } from '@/livue2d/utils/app/type/Paragraph';
+import { requestSpeakers } from '@/livue2d/utils/voicevox/requestSpeakers';
+import type { VoiceVoxSpeakersResponse } from '@/livue2d/utils/voicevox/type/VoiceVoxSpeakers';
 import { onMounted, ref } from 'vue';
 
 const paragraph = defineModel<Paragraph>({

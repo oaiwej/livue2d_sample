@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import VCubismCanvasWebGLProvider from '@/live2d/components/VCubismCanvasWebGLProvider.vue';
-import VCubismExpressionManager from '@/live2d/components/VCubismExpressionManager.vue';
-import VCubismFramework from '@/live2d/components/VCubismFramework.vue';
-import VCubismHitAreaRenderer from '@/live2d/components/VCubismHitAreaRenderer.vue';
-import VCubismHitManager, { type CubismHitEvent } from '@/live2d/components/VCubismHitManager.vue';
-import VCubismModelAssetsProvider, { type CubismModelAssets } from '@/live2d/components/VCubismModelAssetsProvider.vue';
-import VCubismModelAssetsRenderer from '@/live2d/components/VCubismModelAssetsRenderer.vue';
-import VCubismModelMatrixProvider from '@/live2d/components/VCubismModelMatrixProvider.vue';
-import VCubismMotionManager from '@/live2d/components/VCubismMotionManager.vue';
-import VCubismProjectionMatrixProvider from '@/live2d/components/VCubismProjectionMatrixProvider.vue';
-import VCubismRenderLoopProvider from '@/live2d/components/VCubismRenderLoopProvider.vue';
-import VCubismUpdateModel from '@/live2d/components/VCubismUpdateModel.vue';
-import VCubismUpdateModelBreath from '@/live2d/components/VCubismUpdateModelBreath.vue';
-import VCubismUpdateModelExpression from '@/live2d/components/VCubismUpdateModelExpression.vue';
-import VCubismUpdateModelEyeBlink from '@/live2d/components/VCubismUpdateModelEyeBlink.vue';
-import VCubismUpdateModelMotion from '@/live2d/components/VCubismUpdateModelMotion.vue';
-import VCubismUpdateModelPhysics from '@/live2d/components/VCubismUpdateModelPhysics.vue';
-import VCubismViewMatrixProvider from '@/live2d/components/VCubismViewMatrixProvider.vue';
-import { getExpressionList } from '@/live2d/utils/getExpressionList';
-import { getMotionCollection } from '@/live2d/utils/getMotionCollection';
+import VCubismCanvasWebGLProvider from '@/livue2d/live2d/components/VCubismCanvasWebGLProvider.vue';
+import VCubismExpressionManager from '@/livue2d/live2d/components/VCubismExpressionManager.vue';
+import VCubismFramework from '@/livue2d/live2d/components/VCubismFramework.vue';
+import VCubismHitAreaRenderer from '@/livue2d/live2d/components/VCubismHitAreaRenderer.vue';
+import VCubismHitManager, { type CubismHitEvent } from '@/livue2d/live2d/components/VCubismHitManager.vue';
+import VCubismModelAssetsProvider, { type CubismModelAssets } from '@/livue2d/live2d/components/VCubismModelAssetsProvider.vue';
+import VCubismModelAssetsRenderer from '@/livue2d/live2d/components/VCubismModelAssetsRenderer.vue';
+import VCubismModelMatrixProvider from '@/livue2d/live2d/components/VCubismModelMatrixProvider.vue';
+import VCubismMotionManager from '@/livue2d/live2d/components/VCubismMotionManager.vue';
+import VCubismProjectionMatrixProvider from '@/livue2d/live2d/components/VCubismProjectionMatrixProvider.vue';
+import VCubismRenderLoopProvider from '@/livue2d/live2d/components/VCubismRenderLoopProvider.vue';
+import VCubismUpdateModel from '@/livue2d/live2d/components/VCubismUpdateModel.vue';
+import VCubismUpdateModelBreath from '@/livue2d/live2d/components/VCubismUpdateModelBreath.vue';
+import VCubismUpdateModelExpression from '@/livue2d/live2d/components/VCubismUpdateModelExpression.vue';
+import VCubismUpdateModelEyeBlink from '@/livue2d/live2d/components/VCubismUpdateModelEyeBlink.vue';
+import VCubismUpdateModelMotion from '@/livue2d/live2d/components/VCubismUpdateModelMotion.vue';
+import VCubismUpdateModelPhysics from '@/livue2d/live2d/components/VCubismUpdateModelPhysics.vue';
+import VCubismViewMatrixProvider from '@/livue2d/live2d/components/VCubismViewMatrixProvider.vue';
+import { getExpressionList } from '@/livue2d/live2d/utils/getExpressionList';
+import { getMotionCollection } from '@/livue2d/live2d/utils/getMotionCollection';
 import { computed, ref } from 'vue';
 
 const ModelDir: string[] = [

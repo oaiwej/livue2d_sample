@@ -7,9 +7,9 @@
  * @file VVideoRecorder.vue
  * @brief <canvas>の内容を動画にエンコードするコンポーネント
  */
-import type { ProvidedWebGLRenderingContext } from '@/live2d/components/VCubismCanvasWebGLProvider.vue';
-import type { ProvidedRegisterPostRenderFunction, ProvidedUnregisterPostRenderFunction } from '@/live2d/components/VCubismRenderLoopProvider.vue';
-import { safeInject } from '@/live2d/utils/safeInject';
+import type { ProvidedWebGLRenderingContext } from '@/livue2d/live2d/components/VCubismCanvasWebGLProvider.vue';
+import type { ProvidedRegisterPostRenderFunction, ProvidedUnregisterPostRenderFunction } from '@/livue2d/live2d/components/VCubismRenderLoopProvider.vue';
+import { safeInject } from '@/livue2d/live2d/utils/safeInject';
 import { logger } from '@/logger';
 import { onBeforeUnmount, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 

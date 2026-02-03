@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import VVoicevoxLipsync from '@/components/VVoicevoxLipsync.vue';
-import VCubismCanvasWebGLProvider from '@/live2d/components/VCubismCanvasWebGLProvider.vue';
-import VCubismExpressionManager from '@/live2d/components/VCubismExpressionManager.vue';
-import VCubismFramework from '@/live2d/components/VCubismFramework.vue';
-import VCubismModelAssetsProvider from '@/live2d/components/VCubismModelAssetsProvider.vue';
-import VCubismModelAssetsRenderer from '@/live2d/components/VCubismModelAssetsRenderer.vue';
-import VCubismModelMatrixProvider from '@/live2d/components/VCubismModelMatrixProvider.vue';
-import VCubismMotionManager from '@/live2d/components/VCubismMotionManager.vue';
-import VCubismProjectionMatrixProvider from '@/live2d/components/VCubismProjectionMatrixProvider.vue';
-import VCubismRenderLoopProvider from '@/live2d/components/VCubismRenderLoopProvider.vue';
-import VCubismSpriteRenderer from '@/live2d/components/VCubismSpriteRenderer.vue';
-import VCubismUpdateModel from '@/live2d/components/VCubismUpdateModel.vue';
-import VCubismUpdateModelBreath from '@/live2d/components/VCubismUpdateModelBreath.vue';
-import VCubismUpdateModelExpression from '@/live2d/components/VCubismUpdateModelExpression.vue';
-import VCubismUpdateModelEyeBlink from '@/live2d/components/VCubismUpdateModelEyeBlink.vue';
-import VCubismUpdateModelMotion from '@/live2d/components/VCubismUpdateModelMotion.vue';
-import VCubismUpdateModelPhysics from '@/live2d/components/VCubismUpdateModelPhysics.vue';
-import VCubismViewMatrixProvider from '@/live2d/components/VCubismViewMatrixProvider.vue';
-import { WavFileReader } from '@/utils/audio/WavFileReader';
-import { WavFileWriter } from '@/utils/audio/WavFileWriter';
-import { requestAudioQueries } from '@/utils/voicevox/requestAudioQuery';
-import { requestMultiSynthesis } from '@/utils/voicevox/requestSynthesis';
-import { splitSentence } from '@/utils/voicevox/splitSentence';
-import type { VoiceVoxAudioQuery } from '@/utils/voicevox/type/VoiceVoxAudioQuery';
+import VVoicevoxLipsync from '@/livue2d/components/VVoicevoxLipsync.vue';
+import VCubismCanvasWebGLProvider from '@/livue2d/live2d/components/VCubismCanvasWebGLProvider.vue';
+import VCubismExpressionManager from '@/livue2d/live2d/components/VCubismExpressionManager.vue';
+import VCubismFramework from '@/livue2d/live2d/components/VCubismFramework.vue';
+import VCubismModelAssetsProvider from '@/livue2d/live2d/components/VCubismModelAssetsProvider.vue';
+import VCubismModelAssetsRenderer from '@/livue2d/live2d/components/VCubismModelAssetsRenderer.vue';
+import VCubismModelMatrixProvider from '@/livue2d/live2d/components/VCubismModelMatrixProvider.vue';
+import VCubismMotionManager from '@/livue2d/live2d/components/VCubismMotionManager.vue';
+import VCubismProjectionMatrixProvider from '@/livue2d/live2d/components/VCubismProjectionMatrixProvider.vue';
+import VCubismRenderLoopProvider from '@/livue2d/live2d/components/VCubismRenderLoopProvider.vue';
+import VCubismSpriteRenderer from '@/livue2d/live2d/components/VCubismSpriteRenderer.vue';
+import VCubismUpdateModel from '@/livue2d/live2d/components/VCubismUpdateModel.vue';
+import VCubismUpdateModelBreath from '@/livue2d/live2d/components/VCubismUpdateModelBreath.vue';
+import VCubismUpdateModelExpression from '@/livue2d/live2d/components/VCubismUpdateModelExpression.vue';
+import VCubismUpdateModelEyeBlink from '@/livue2d/live2d/components/VCubismUpdateModelEyeBlink.vue';
+import VCubismUpdateModelMotion from '@/livue2d/live2d/components/VCubismUpdateModelMotion.vue';
+import VCubismUpdateModelPhysics from '@/livue2d/live2d/components/VCubismUpdateModelPhysics.vue';
+import VCubismViewMatrixProvider from '@/livue2d/live2d/components/VCubismViewMatrixProvider.vue';
+import { AudioPlayer } from '@/livue2d/utils/audio/AudioPlayer';
+import { requestAudioQueries } from '@/livue2d/utils/voicevox/requestAudioQuery';
+import { requestMultiSynthesis } from '@/livue2d/utils/voicevox/requestSynthesis';
+import { splitSentence } from '@/livue2d/utils/voicevox/splitSentence';
+import type { VoiceVoxAudioQuery } from '@/livue2d/utils/voicevox/type/VoiceVoxAudioQuery';
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch, type ShallowRef } from 'vue';
 
 interface NovelGameText {
@@ -45,7 +44,7 @@ class Character {
   voiceSpeaker = ref<number>(0);
   audioQueries = ref<VoiceVoxAudioQuery[]>([]);
   speedScale = ref<number>(1.2);
-  audio = shallowRef<HTMLAudioElement>(new Audio());
+  audioPlayer = ref<AudioPlayer>(new AudioPlayer());
   x = ref<number>(0);
   y = ref<number>(0);
   scale = ref<number>(1);
@@ -55,17 +54,14 @@ class Character {
   async speak(text: string, motionGroupName: string, motionIndex: number, expressionIndex: number | null) {
     this.text.value = text;
     const audioQueries = await requestAudioQueries(splitSentence(this.text.value), this.voiceSpeaker.value);
-    for (const query of audioQueries) {
+    const validQueries = audioQueries.filter(q => q.accent_phrases.length > 0);
+    for (const query of validQueries) {
       query.speedScale = this.speedScale.value;
     }
-    const buffers = await requestMultiSynthesis(audioQueries, this.voiceSpeaker.value);
-    const waves = buffers.map((buffer) => new WavFileReader(buffer));
-    const wav = new WavFileWriter(waves[0].getFormat());
-    wav.append(waves)
-    this.releaseAudio();
-    this.audio.value.src = URL.createObjectURL(new Blob([wav.getBuffer()], { type: 'audio/wav' }));
-    this.audio.value.play();
+    const buffers = await requestMultiSynthesis(validQueries, this.voiceSpeaker.value);
+    this.audioPlayer.value.prepare(buffers)
     this.audioQueries.value = audioQueries;
+    this.audioPlayer.value.start(0);
     this.motionGroupName.value = motionGroupName;
     this.motionIndex.value = motionIndex;
     this.expressionIndex.value = expressionIndex;
@@ -83,12 +79,7 @@ class Character {
    * オーディオを停止して解放
    */
   releaseAudio() {
-    const blobUrl = this.audio.value.src;
-    this.audio.value.currentTime = 0;
-    this.audio.value.src = '';
-    if (blobUrl) {
-      URL.revokeObjectURL(blobUrl);
-    }
+    this.audioPlayer.value.release();
   }
 
   constructor(
@@ -102,7 +93,7 @@ class Character {
     } = {}) {
     this.name.value = name;
     this.nameJapanese.value = nameJapanese;
-    this.audio.value.onended = () => {
+    this.audioPlayer.value.onended = () => {
       this.releaseAudio();
     };
     this.x.value = options.x ?? this.x.value;
@@ -206,6 +197,11 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (charIncrementIntervalId.value) {
     clearInterval(charIncrementIntervalId.value);
+  }
+});
+onBeforeUnmount(() => {
+  for (const character of [mao.value, hiyori.value]) {
+    character.releaseAudio();
   }
 });
 </script>
