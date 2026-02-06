@@ -5,7 +5,7 @@ import type {
   ChatCompletionToolMessageParam,
 } from 'openai/resources/index.mjs'
 import type { ChatCompletionUserMessageParam } from 'openai/src/resources/index.js'
-import { model, openai } from '../llm/openai'
+import { model, openai, temperature, temperature2 } from '../llm/openai'
 import type { ExpressionType } from './type/ExpressionType'
 
 /**
@@ -128,7 +128,7 @@ export class CharacterChatWithExpression {
         messages: [...systemMessages, ...this.conversationHistory],
         tools: this.tools,
         tool_choice: 'auto', // AIに関数呼び出しの判断を委ねる
-        temperature: 0.7,
+        temperature,
       })
 
       // AIの応答を取得
@@ -154,7 +154,7 @@ export class CharacterChatWithExpression {
           const response = await openai.chat.completions.create({
             model,
             messages: [...systemMessages, ...this.conversationHistory],
-            temperature: 0.7,
+            temperature,
           })
 
           // 応答を履歴に追加
@@ -196,7 +196,7 @@ export class CharacterChatWithExpression {
         ...this.conversationHistory,
         this.summarizeUserMessage,
       ],
-      temperature: 0.0,
+      temperature: temperature2,
     })
     const summary = response.choices[0].message.content ?? ''
     this.conversationHistory = [

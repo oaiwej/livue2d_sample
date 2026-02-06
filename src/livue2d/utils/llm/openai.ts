@@ -6,3 +6,5 @@ export const openai = new OpenAI({
   apiKey: import.meta.env.VITE_OPENAI_API_KEY,
   dangerouslyAllowBrowser: true,
 })
+export const temperature = parseFloat(import.meta.env.VITE_OPENAI_TEMPERATURE || '1.0')
+export const temperature2 = parseFloat(import.meta.env.VITE_OPENAI_TEMPERATURE2 || '1.0')
