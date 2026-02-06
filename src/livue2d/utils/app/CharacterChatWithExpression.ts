@@ -77,7 +77,7 @@ export class CharacterChatWithExpression {
    */
   constructor(
     systemMessages: ChatCompletionSystemMessageParam[] = [],
-    summarizeLength: number = 10,
+    summarizeLength: number = 20,
   ) {
     this.systemMessages = systemMessages
     this.summarizeLength = summarizeLength
@@ -141,6 +141,9 @@ export class CharacterChatWithExpression {
         if (functionCall.function.name === 'change_character_expression') {
           // 関数の引数をJSONとしてパース
           const args = JSON.parse(functionCall.function.arguments) as ChangeCharacterExpressionArgs
+
+          // ツールコールを履歴に追加
+          this.conversationHistory.push(message)
 
           // ツールレスポンスを作成
           const toolMessage: ChatCompletionToolMessageParam = {
