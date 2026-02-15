@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosRequestConfig } from 'axios'
 import type { VoiceVoxAudioQuery } from './type/VoiceVoxAudioQuery'
 
 /**
@@ -10,9 +10,11 @@ import type { VoiceVoxAudioQuery } from './type/VoiceVoxAudioQuery'
 export async function requestSynthesis(
   audio_query: VoiceVoxAudioQuery,
   speaker: number,
+  config: AxiosRequestConfig = {},
 ): Promise<ArrayBuffer> {
   const apiUrl = import.meta.env.VITE_VOICEVOX_API_BASE_URL.replace(/\/$/, '')
   const response = await axios.post(`${apiUrl}/synthesis`, audio_query, {
+    ...config,
     params: {
       speaker,
     },
