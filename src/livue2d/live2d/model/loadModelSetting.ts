@@ -1,5 +1,5 @@
-import { CubismModelSettingJson } from '@framework/cubismmodelsettingjson'
-import { ICubismModelSetting } from '@framework/icubismmodelsetting'
+import { CubismModelSettingJson } from '@CubismSdkForWeb/Framework/src/cubismmodelsettingjson'
+import { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
 import { loadFileAsBytes } from '../utils/loadFileAsBytes'
 
 /**

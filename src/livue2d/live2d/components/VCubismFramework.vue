@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
-import { CubismFramework } from '@framework/live2dcubismframework';
+import { CubismFramework } from '@CubismSdkForWeb/Framework/src/live2dcubismframework';
 import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
+import { logger } from '../../logger';
 
 const initialized = ref(false);
 

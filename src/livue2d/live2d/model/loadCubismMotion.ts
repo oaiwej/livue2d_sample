@@ -1,8 +1,8 @@
-import { logger } from '@/livue2d/logger'
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import type { CubismModel } from '@framework/model/cubismmodel'
-import { CubismMotion } from '@framework/motion/cubismmotion'
-import { csmMap } from '@framework/type/csmmap'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import type { CubismModel } from '@CubismSdkForWeb/Framework/src/model/cubismmodel'
+import { CubismMotion } from '@CubismSdkForWeb/Framework/src/motion/cubismmotion'
+import { csmMap } from '@CubismSdkForWeb/Framework/src/type/csmmap'
+import { logger } from '../../logger'
 import { loadFileAsBytes } from '../utils/loadFileAsBytes'
 
 /**

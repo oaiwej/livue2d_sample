@@ -1,7 +1,10 @@
-import { CubismDefaultParameterId } from '@framework/cubismdefaultparameterid'
-import { BreathParameterData, CubismBreath } from '@framework/effect/cubismbreath'
-import { CubismFramework } from '@framework/live2dcubismframework'
-import { csmVector } from '@framework/type/csmvector'
+import { CubismDefaultParameterId } from '@CubismSdkForWeb/Framework/src/cubismdefaultparameterid'
+import {
+  BreathParameterData,
+  CubismBreath,
+} from '@CubismSdkForWeb/Framework/src/effect/cubismbreath'
+import { CubismFramework } from '@CubismSdkForWeb/Framework/src/live2dcubismframework'
+import { csmVector } from '@CubismSdkForWeb/Framework/src/type/csmvector'
 
 /**
  * Live2Dモデルの呼吸機能をセットアップする関数

@@ -1,4 +1,4 @@
-import type { csmMap } from '@framework/type/csmmap'
+import type { csmMap } from '@CubismSdkForWeb/Framework/src/type/csmmap'
 
 export function csmMapToObject<K extends string | number | symbol, T>(
   map: csmMap<K, T>,

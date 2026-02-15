@@ -1,4 +1,4 @@
-import type { VoiceVoxAudioQuery } from '@/livue2d/utils/voicevox/type/VoiceVoxAudioQuery'
+import type { VoiceVoxAudioQuery } from './type/VoiceVoxAudioQuery'
 import type { VoiceVoxMora } from './type/VoiceVoxMora'
 
 /**

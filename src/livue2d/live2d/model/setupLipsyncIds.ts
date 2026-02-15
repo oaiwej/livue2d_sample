@@ -1,6 +1,6 @@
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import type { CubismIdHandle } from '@framework/id/cubismid'
-import { csmVector } from '@framework/type/csmvector'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import type { CubismIdHandle } from '@CubismSdkForWeb/Framework/src/id/cubismid'
+import { csmVector } from '@CubismSdkForWeb/Framework/src/type/csmvector'
 
 /**
  * リップシンク（口の動き）のパラメータIDを取得する関数

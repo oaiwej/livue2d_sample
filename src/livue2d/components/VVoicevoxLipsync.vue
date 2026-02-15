@@ -3,18 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import type { ProvidedCubismModelAssets } from '@/livue2d/live2d/components/VCubismModelAssetsProvider.vue';
-import type { ProvidedRegisterUpdateFunction, ProvidedUnregisterUpdateFunction } from '@/livue2d/live2d/components/VCubismRenderLoopProvider.vue';
-import { safeInject } from '@/livue2d/live2d/utils/safeInject';
-import { logger } from '@/livue2d/logger';
-import { getCurrentAndPreviousMora } from '@/livue2d/utils/lipsync/getCurrentAndPreviousMora';
-import { vowelToMouthParameters, type MouthParameters } from '@/livue2d/utils/lipsync/vowelToMouthParameter';
-import { easeOutCubic } from '@/livue2d/utils/math/easing';
-import { lerp } from '@/livue2d/utils/math/lerp';
-import { createMorasWithPauses } from '@/livue2d/utils/voicevox/createMorasWithPauses';
-import type { VoiceVoxAudioQuery } from '@/livue2d/utils/voicevox/type/VoiceVoxAudioQuery';
-import type { VoiceVoxMora } from '@/livue2d/utils/voicevox/type/VoiceVoxMora';
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import type { ProvidedCubismModelAssets } from '../live2d/components/VCubismModelAssetsProvider.vue';
+import type { ProvidedRegisterUpdateFunction, ProvidedUnregisterUpdateFunction } from '../live2d/components/VCubismRenderLoopProvider.vue';
+import { safeInject } from '../live2d/utils/safeInject';
+import { logger } from '../logger';
+import { getCurrentAndPreviousMora } from '../utils/lipsync/getCurrentAndPreviousMora';
+import { vowelToMouthParameters, type MouthParameters } from '../utils/lipsync/vowelToMouthParameter';
+import { easeOutCubic } from '../utils/math/easing';
+import { lerp } from '../utils/math/lerp';
+import { createMorasWithPauses } from '../utils/voicevox/createMorasWithPauses';
+import type { VoiceVoxAudioQuery } from '../utils/voicevox/type/VoiceVoxAudioQuery';
+import type { VoiceVoxMora } from '../utils/voicevox/type/VoiceVoxMora';
 
 // コンポーネントのプロパティ定義
 const props = withDefaults(defineProps<{

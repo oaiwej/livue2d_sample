@@ -3,9 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
-import { Constant } from '@framework/live2dcubismframework';
+import { Constant } from '@CubismSdkForWeb/Framework/src/live2dcubismframework';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import { type ProvidedWebGLProgram, type ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';

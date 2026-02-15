@@ -3,12 +3,12 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
-import type { CubismIdHandle } from '@framework/id/cubismid';
-import { Constant } from '@framework/live2dcubismframework';
-import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
-import type { CubismModel } from '@framework/model/cubismmodel';
+import type { CubismIdHandle } from '@CubismSdkForWeb/Framework/src/id/cubismid';
+import { Constant } from '@CubismSdkForWeb/Framework/src/live2dcubismframework';
+import { CubismMatrix44 } from '@CubismSdkForWeb/Framework/src/math/cubismmatrix44';
+import type { CubismModel } from '@CubismSdkForWeb/Framework/src/model/cubismmodel';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { logger } from '../../logger';
 import { isPointInTriangle } from '../utils/isPointInTriangle';
 import { safeInject } from '../utils/safeInject';
 import { type ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';

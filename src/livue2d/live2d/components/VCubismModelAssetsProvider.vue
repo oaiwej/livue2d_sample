@@ -22,30 +22,30 @@
  *
  * @emits {('loaded', CubismModelAssets)} - アセットの読み込み完了時に発火するイベント
  */
-import { loadCubismExpression } from '@/livue2d/live2d/model/loadCubismExpression';
-import { loadCubismMoc } from '@/livue2d/live2d/model/loadCubismMoc';
-import { loadCubismModel } from '@/livue2d/live2d/model/loadCubismModel';
-import { loadCubismMotion } from '@/livue2d/live2d/model/loadCubismMotion';
-import { loadCubismPhysics } from '@/livue2d/live2d/model/loadCubismPhysics';
-import { loadCubismPose } from '@/livue2d/live2d/model/loadCubismPose';
-import { loadModelSetting } from '@/livue2d/live2d/model/loadModelSetting';
-import { loadUserData } from '@/livue2d/live2d/model/loadUserData';
-import { setupBreath } from '@/livue2d/live2d/model/setupBreath';
-import { setupEyeBlink } from '@/livue2d/live2d/model/setupEyeBlink';
-import { setupEyeBlinkIds } from '@/livue2d/live2d/model/setupEyeBlinkIds';
-import { setupLipsyncIds } from '@/livue2d/live2d/model/setupLipsyncIds';
-import { setupTextures } from '@/livue2d/live2d/model/setupTextures';
-import { logger } from '@/livue2d/logger';
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting';
-import { CubismModelMatrix } from '@framework/math/cubismmodelmatrix';
-import { CubismMoc } from '@framework/model/cubismmoc';
-import { CubismModel } from '@framework/model/cubismmodel';
-import { CubismExpressionMotionManager } from '@framework/motion/cubismexpressionmotionmanager';
-import { CubismMotionManager } from '@framework/motion/cubismmotionmanager';
-import { CubismMotionQueueManager } from '@framework/motion/cubismmotionqueuemanager';
-import { CubismRenderer_WebGL } from '@framework/rendering/cubismrenderer_webgl';
-import type { csmString } from '@framework/type/csmstring';
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting';
+import { CubismModelMatrix } from '@CubismSdkForWeb/Framework/src/math/cubismmodelmatrix';
+import { CubismMoc } from '@CubismSdkForWeb/Framework/src/model/cubismmoc';
+import { CubismModel } from '@CubismSdkForWeb/Framework/src/model/cubismmodel';
+import { CubismExpressionMotionManager } from '@CubismSdkForWeb/Framework/src/motion/cubismexpressionmotionmanager';
+import { CubismMotionManager } from '@CubismSdkForWeb/Framework/src/motion/cubismmotionmanager';
+import { CubismMotionQueueManager } from '@CubismSdkForWeb/Framework/src/motion/cubismmotionqueuemanager';
+import { CubismRenderer_WebGL } from '@CubismSdkForWeb/Framework/src/rendering/cubismrenderer_webgl';
+import type { csmString } from '@CubismSdkForWeb/Framework/src/type/csmstring';
 import { computed, onBeforeUnmount, onMounted, onUnmounted, provide, ref, shallowRef, watch, type Ref } from 'vue';
+import { logger } from '../../logger';
+import { loadCubismExpression } from '../model/loadCubismExpression';
+import { loadCubismMoc } from '../model/loadCubismMoc';
+import { loadCubismModel } from '../model/loadCubismModel';
+import { loadCubismMotion } from '../model/loadCubismMotion';
+import { loadCubismPhysics } from '../model/loadCubismPhysics';
+import { loadCubismPose } from '../model/loadCubismPose';
+import { loadModelSetting } from '../model/loadModelSetting';
+import { loadUserData } from '../model/loadUserData';
+import { setupBreath } from '../model/setupBreath';
+import { setupEyeBlink } from '../model/setupEyeBlink';
+import { setupEyeBlinkIds } from '../model/setupEyeBlinkIds';
+import { setupLipsyncIds } from '../model/setupLipsyncIds';
+import { setupTextures } from '../model/setupTextures';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 

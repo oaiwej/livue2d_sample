@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { CubismModelMatrix } from '@framework/math/cubismmodelmatrix';
+import { CubismModelMatrix } from '@CubismSdkForWeb/Framework/src/math/cubismmodelmatrix';
 import { onBeforeUnmount, onMounted, provide, ref, shallowRef, watch, type Ref } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';

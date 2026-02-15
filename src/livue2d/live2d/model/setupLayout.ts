@@ -1,6 +1,6 @@
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import type { CubismModelMatrix } from '@framework/math/cubismmodelmatrix'
-import { csmMap } from '@framework/type/csmmap'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import type { CubismModelMatrix } from '@CubismSdkForWeb/Framework/src/math/cubismmodelmatrix'
+import { csmMap } from '@CubismSdkForWeb/Framework/src/type/csmmap'
 
 /**
  * Live2Dモデルのレイアウト情報を設定する

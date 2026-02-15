@@ -1,6 +1,6 @@
-import { logger } from '@/livue2d/logger'
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import { csmVector } from '@framework/type/csmvector'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import { csmVector } from '@CubismSdkForWeb/Framework/src/type/csmvector'
+import { logger } from '../../logger'
 
 /**
  * テクスチャ情報を格納するインターフェース

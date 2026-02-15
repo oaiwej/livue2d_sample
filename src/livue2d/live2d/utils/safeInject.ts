@@ -1,5 +1,5 @@
-import { logger } from '@/livue2d/logger'
 import { inject } from 'vue'
+import { logger } from '../../logger'
 
 /**
  * Vue3のinject関数のラッパーで、nullチェックを行い、

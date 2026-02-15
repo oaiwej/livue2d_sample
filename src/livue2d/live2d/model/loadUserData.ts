@@ -1,5 +1,5 @@
-import { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import { CubismModelUserData } from '@framework/model/cubismmodeluserdata'
+import { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import { CubismModelUserData } from '@CubismSdkForWeb/Framework/src/model/cubismmodeluserdata'
 import { loadFileAsBytes } from '../utils/loadFileAsBytes'
 
 /**

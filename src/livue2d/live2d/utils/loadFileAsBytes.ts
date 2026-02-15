@@ -1,4 +1,4 @@
-import { logger } from '@/livue2d/logger'
+import { logger } from '../../logger'
 
 /**
  * Load a file as bytes.

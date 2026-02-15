@@ -1,4 +1,4 @@
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
 
 export interface ExpressionInfo {
   filename: string
