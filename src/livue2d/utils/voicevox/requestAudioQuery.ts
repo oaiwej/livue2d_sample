@@ -32,10 +32,11 @@ export async function requestAudioQuery(
 export async function requestAudioQueries(
   sentences: string[],
   speaker: number,
+  config: AxiosRequestConfig = {},
 ): Promise<VoiceVoxAudioQuery[]> {
   const audioQueries = []
   for (const sentence of sentences) {
-    const audioQuery = await requestAudioQuery(sentence, speaker)
+    const audioQuery = await requestAudioQuery(sentence, speaker, config)
     audioQueries.push(audioQuery)
   }
   return audioQueries
