@@ -1,6 +1,6 @@
-import { logger } from '@/livue2d/logger'
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
-import { CubismPhysics } from '@framework/physics/cubismphysics'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
+import { CubismPhysics } from '@CubismSdkForWeb/Framework/src/physics/cubismphysics'
+import { logger } from '../../logger'
 import { loadFileAsBytes } from '../utils/loadFileAsBytes'
 
 /**

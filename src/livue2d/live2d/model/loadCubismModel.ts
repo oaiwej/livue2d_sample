@@ -1,5 +1,5 @@
-import { CubismMoc } from '@framework/model/cubismmoc'
-import type { CubismModel } from '@framework/model/cubismmodel'
+import { CubismMoc } from '@CubismSdkForWeb/Framework/src/model/cubismmoc'
+import type { CubismModel } from '@CubismSdkForWeb/Framework/src/model/cubismmodel'
 
 /**
  * Cubism モデルをロードする関数

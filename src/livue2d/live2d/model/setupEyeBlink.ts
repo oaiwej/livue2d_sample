@@ -1,5 +1,5 @@
-import { CubismEyeBlink } from '@framework/effect/cubismeyeblink'
-import type { ICubismModelSetting } from '@framework/icubismmodelsetting'
+import { CubismEyeBlink } from '@CubismSdkForWeb/Framework/src/effect/cubismeyeblink'
+import type { ICubismModelSetting } from '@CubismSdkForWeb/Framework/src/icubismmodelsetting'
 
 /**
  * Live2Dモデルのまばたき機能をセットアップする

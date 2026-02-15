@@ -1,5 +1,5 @@
-import type { VoiceVoxAudioQuery } from '@/livue2d/utils/voicevox/type/VoiceVoxAudioQuery'
 import { createMorasWithPauses } from './createMorasWithPauses'
+import type { VoiceVoxAudioQuery } from './type/VoiceVoxAudioQuery'
 
 /**
  * 音声の再生時間を計算

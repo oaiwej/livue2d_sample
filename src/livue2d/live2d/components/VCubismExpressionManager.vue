@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
 import { onMounted, ref, watch } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';
 

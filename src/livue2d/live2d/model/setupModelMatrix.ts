@@ -1,5 +1,5 @@
-import { CubismModelMatrix } from '@framework/math/cubismmodelmatrix'
-import type { CubismModel } from '@framework/model/cubismmodel'
+import { CubismModelMatrix } from '@CubismSdkForWeb/Framework/src/math/cubismmodelmatrix'
+import type { CubismModel } from '@CubismSdkForWeb/Framework/src/model/cubismmodel'
 
 /**
  * CubismModelのモデルマトリックスを設定します。

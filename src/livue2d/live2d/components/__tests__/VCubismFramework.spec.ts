@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import VCubismFramework from '../VCubismFramework.vue'
 
 // CubismFrameworkのモック
-vi.mock('@framework/live2dcubismframework', () => ({
+vi.mock('@CubismSdkForWeb/Framework/src/live2dcubismframework', () => ({
   CubismFramework: {
     startUp: vi.fn(),
     initialize: vi.fn(),
@@ -13,15 +13,15 @@ vi.mock('@framework/live2dcubismframework', () => ({
 }))
 
 // Loggerのモック
-vi.mock('@/livue2d/logger', () => ({
+vi.mock('../../logger', () => ({
   logger: {
     debug: vi.fn(),
   },
 }))
 
 // インポート文はモックの後に配置
-import { logger } from '@/livue2d/logger'
-import { CubismFramework } from '@framework/live2dcubismframework'
+import { CubismFramework } from '@CubismSdkForWeb/Framework/src/live2dcubismframework'
+import { logger } from '../../../logger'
 
 describe('VCubismFramework', () => {
   beforeEach(() => {

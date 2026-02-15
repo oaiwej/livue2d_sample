@@ -1,4 +1,4 @@
-import type { csmVector } from '@framework/type/csmvector'
+import type { csmVector } from '@CubismSdkForWeb/Framework/src/type/csmvector'
 
 export function csmVectorToArray<T>(vector: csmVector<T>): T[] {
   const array: T[] = []

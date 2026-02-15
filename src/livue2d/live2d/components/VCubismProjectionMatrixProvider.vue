@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
+import { CubismMatrix44 } from '@CubismSdkForWeb/Framework/src/math/cubismmatrix44';
 import { onBeforeUnmount, onMounted, provide, ref, shallowRef, type Ref } from 'vue';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';

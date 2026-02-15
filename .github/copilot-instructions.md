@@ -31,14 +31,8 @@ import文で`@`を使って相対パスを記述することで、`src`ディレ
     "@src/*": [
     "./src/*"
     ],
-    "@core/*": [
-    "./CubismSdkForWeb/Core/*"
+    "@CubismSdkForWeb/*": [
+    "./CubismSdkForWeb/*"
     ],
-    "@framework/*": [
-    "./CubismSdkForWeb/Framework/src/*"
-    ],
-    "@demo/*": [
-    "./CubismSdkForWeb/Samples/TypeScript/Demo/src/*"
-    ]
 }
 ```

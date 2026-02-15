@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';
 import type { ProvidedRegisterUpdateFunction, ProvidedUnregisterUpdateFunction } from './VCubismRenderLoopProvider.vue';
@@ -88,7 +88,7 @@ function initializeParameterIndexes() {
       paramIndexes.value.BodyAngleX = i;
     }
   }
-} 
+}
 
 /**
  * 視線・顔・姿勢を更新する
@@ -108,7 +108,7 @@ function update(deltaTime: number) {
   // 視線の更新
   model.addParameterValueByIndex(paramIndexes.value.GazeX, (props.gazeX ?? 0));
   model.addParameterValueByIndex(paramIndexes.value.GazeY, (props.gazeY ?? 0));
-  
+
   // 顔の傾きの更新
   model.addParameterValueByIndex(paramIndexes.value.FaceAngleX, (props.faceAngleX ?? 0) * 30.0);
   model.addParameterValueByIndex(paramIndexes.value.FaceAngleY, (props.faceAngleY ?? 0) * 30.0);

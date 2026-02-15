@@ -8,8 +8,8 @@
  * @brief Live2Dモデルのアニメーションループを提供するコンポーネント
  *     - モデルの更新処理を行う
  */
-import { logger } from '@/livue2d/logger';
 import { onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLProgram, ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 export type UpdateFunction = (deltaTime: number) => void | Promise<void>;

@@ -8,10 +8,10 @@
  * @brief モデルアセットのレンダリング処理を提供するコンポーネント
  * Live2Dモデルを実際に描画するための機能を実装しています
  */
-import { logger } from '@/livue2d/logger';
-import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
-import { CubismModelMatrix } from '@framework/math/cubismmodelmatrix';
+import { CubismMatrix44 } from '@CubismSdkForWeb/Framework/src/math/cubismmatrix44';
+import { CubismModelMatrix } from '@CubismSdkForWeb/Framework/src/math/cubismmodelmatrix';
 import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedWebGLRenderingContext } from './VCubismCanvasWebGLProvider.vue';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';

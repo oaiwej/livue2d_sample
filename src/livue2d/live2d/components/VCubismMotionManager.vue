@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { logger } from '@/livue2d/logger';
-import type { ACubismMotion } from '@framework/motion/acubismmotion';
-import type { CubismMotionQueueEntry } from '@framework/motion/cubismmotionqueueentry';
+import type { ACubismMotion } from '@CubismSdkForWeb/Framework/src/motion/acubismmotion';
+import type { CubismMotionQueueEntry } from '@CubismSdkForWeb/Framework/src/motion/cubismmotionqueueentry';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { logger } from '../../logger';
 import { safeInject } from '../utils/safeInject';
 import type { ProvidedCubismModelAssets } from './VCubismModelAssetsProvider.vue';
 

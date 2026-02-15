@@ -16,15 +16,9 @@
       "@/*": [
         "./src/*"
       ],
-      "@core/*": [
-        "./CubismSdkForWeb/Core/*"
+      "@CubismSdkForWeb/*": [
+        "./CubismSdkForWeb/*"
       ],
-      "@framework/*": [
-        "./CubismSdkForWeb/Framework/src/*"
-      ],
-      "@demo/*": [
-        "./CubismSdkForWeb/Samples/TypeScript/Demo/src/*"
-      ]
     }
   }
 }
